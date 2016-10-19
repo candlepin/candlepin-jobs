@@ -1,6 +1,6 @@
 job('seed') {
     scm {
-        github 'scratch/job-dsl-gradle-example'
+        github 'Lorquas/candlepin-jobs.git'
     }
     triggers {
         scm 'H/5 * * * *'
