@@ -36,7 +36,7 @@ job("$basePath/subscription-manager-nose-tests-pr"){
             cron('H/5 * * * *')
             orgWhitelist('candlepin')
             userWhitelist(devs)
-            //credentialsId('830050e0-ece9-4878-8b3d-2779cfe76abe')
+            credentialsId('830050e0-ece9-4878-8b3d-2779cfe76abe')
         }
     }
     steps {
