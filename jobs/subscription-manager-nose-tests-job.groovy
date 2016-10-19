@@ -1,22 +1,29 @@
-String[] devs = ['awood',
-                 'mstead',
-                 'wottop',
-                 'bkearney',
-                 'Ceiu',
-                 'vritant',
-                 'nguyenfilip',
-                 'cnsnyder',
-                 'barnabycourt',
-                 'kahowell']
+devs = ['awood',
+        'mstead',
+        'wottop',
+        'bkearney',
+        'Ceiu',
+        'vritant',
+        'nguyenfilip',
+        'cnsnyder',
+        'barnabycourt',
+        'kahowell']
 
-job('scratch/subscription-manager-nose-tests-pr'){
+String submanRepo = 'candlepin/subscription-manager'
+String basePath = 'scratch'
+folder(basePath) {
+    description 'This is a scratch job.'
+}
+
+
+job("$basePath/subscription-manager-nose-tests-pr"){
     logRotator{
         numToKeep(365)
     }
-    scm{
-        git{
+    scm {
+        git {
             remote{
-                github('candlepin/subscription-manager')
+                github(submanRepo)
                 refspec('+refs/pull/*:refs/remotes/origin/pr/*')
             }
             branch('${sha1}')
@@ -29,7 +36,7 @@ job('scratch/subscription-manager-nose-tests-pr'){
             cron('H/5 * * * *')
             orgWhitelist('candlepin')
             userWhitelist(devs)
-            credentialsId('830050e0-ece9-4878-8b3d-2779cfe76abe')
+            //credentialsId('830050e0-ece9-4878-8b3d-2779cfe76abe')
         }
     }
     steps {
