@@ -10,11 +10,11 @@ devs = ['awood',
         'kahowell']
 
 String submanRepo = 'candlepin/subscription-manager'
-String basePath = 'scratch'
+String basePath = 'Scratch'
+
 folder(basePath) {
     description 'This is a scratch job.'
 }
-
 
 job("$basePath/subscription-manager-nose-tests-pr"){
     logRotator{
