@@ -12,7 +12,4 @@ job('seed') {
             additionalClasspath 'src/main/groovy'
         }
     }
-    publishers {
-        archiveJunit 'build/test-results/**/*.xml'
-    }
 }
