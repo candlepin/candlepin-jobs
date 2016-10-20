@@ -10,6 +10,8 @@ devs = ['awood',
         'kahowell']
 
 String submanRepo = 'candlepin/subscription-manager'
+
+// not sure if we want to stick this in a folder yet
 //String basePath = 'Scratch'
 
 //folder(basePath) {
@@ -18,8 +20,9 @@ String submanRepo = 'candlepin/subscription-manager'
 
 //job("$basePath/subscription-manager-nose-tests-pr"){
 job("subscription-manager-nose-tests-pr"){
+    label('rhsm')
     logRotator{
-        numToKeep(365)
+        numToKeep(20)
     }
     scm {
         git {
@@ -40,7 +43,6 @@ job("subscription-manager-nose-tests-pr"){
             cron('H/5 * * * *')
             orgWhitelist('candlepin')
             userWhitelist(devs)
-            //gitHubAuthId('830050e0-ece9-4878-8b3d-2779cfe76abe')
         }
     }
     steps {
