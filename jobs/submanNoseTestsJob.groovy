@@ -21,6 +21,9 @@ String submanRepo = 'candlepin/subscription-manager'
 //job("$basePath/subscription-manager-nose-tests-pr"){
 job("subscription-manager-nose-tests-pr"){
     label('rhsm')
+    wrappers {
+        colorizeOutput('css')
+    }
     logRotator{
         numToKeep(20)
     }
