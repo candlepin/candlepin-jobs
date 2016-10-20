@@ -10,13 +10,14 @@ devs = ['awood',
         'kahowell']
 
 String submanRepo = 'candlepin/subscription-manager'
-String basePath = 'Scratch'
+//String basePath = 'Scratch'
 
-folder(basePath) {
-    description 'This is a scratch job.'
-}
+//folder(basePath) {
+//    description 'This is a scratch job.'
+//}
 
-job("$basePath/subscription-manager-nose-tests-pr"){
+//job("$basePath/subscription-manager-nose-tests-pr"){
+job("subscription-manager-nose-tests-pr"){
     logRotator{
         numToKeep(365)
     }
@@ -33,10 +34,13 @@ job("$basePath/subscription-manager-nose-tests-pr"){
         githubPullRequest {
             admins(devs)
             onlyTriggerPhrase(false)
+            useGitHubHooks(false)
+            permitAll(false)
+            allowMembersOfWhitelistedOrgsAsAdmin(false)
             cron('H/5 * * * *')
             orgWhitelist('candlepin')
             userWhitelist(devs)
-            credentialsId('830050e0-ece9-4878-8b3d-2779cfe76abe')
+            //gitHubAuthId('830050e0-ece9-4878-8b3d-2779cfe76abe')
         }
     }
     steps {
