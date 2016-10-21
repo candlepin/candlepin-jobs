@@ -9,8 +9,10 @@ String submanRepo = 'candlepin/subscription-manager'
 
 //job("$basePath/subscription-manager-nose-tests-pr"){
 job("subscription-manager-nose-tests-pr"){
+    description('Welcome to the subscription-manager nose tests!')
     label('rhsm')
     wrappers {
+        preBuildCleanup()
         colorizeOutput('css')
     }
     logRotator{
