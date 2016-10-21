@@ -1,14 +1,3 @@
-devs = ['awood',
-        'mstead',
-        'wottop',
-        'bkearney',
-        'Ceiu',
-        'vritant',
-        'nguyenfilip',
-        'cnsnyder',
-        'barnabycourt',
-        'kahowell']
-
 String submanRepo = 'candlepin/subscription-manager'
 
 // not sure if we want to stick this in a folder yet
@@ -38,14 +27,17 @@ job("subscription-manager-nose-tests-pr"){
     }
     triggers {
         githubPullRequest {
-            admins(devs)
             onlyTriggerPhrase(false)
             useGitHubHooks(false)
             permitAll(false)
-            allowMembersOfWhitelistedOrgsAsAdmin(false)
+            allowMembersOfWhitelistedOrgsAsAdmin(true)
             cron('H/5 * * * *')
             orgWhitelist('candlepin')
-            userWhitelist(devs)
+            extensions {
+                commitStatus {
+                    context('jenkins-nosetests')
+                }
+            }
         }
     }
     steps {
