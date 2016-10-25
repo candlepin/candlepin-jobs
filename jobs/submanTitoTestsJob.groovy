@@ -34,7 +34,7 @@ job("subscription-manager-tito-tests-pr"){
             orgWhitelist('candlepin')
             extensions {
                 commitStatus {
-                    context('jenkins-stylish')
+                    context('jenkins-tito')
                 }
             }
         }
