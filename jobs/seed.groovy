@@ -1,6 +1,6 @@
 job('Candlepin Seed Job') {
     scm {
-        github 'Lorquas/candlepin-jobs'
+        github 'candlepin/candlepin-jobs'
     }
     triggers {
         scm 'H/5 * * * *'
