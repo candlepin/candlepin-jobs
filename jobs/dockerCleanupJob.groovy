@@ -1,13 +1,8 @@
-jenkinsSlavesDefault = 'rhsm-jenkins-slave1.usersys.redhat.com' +
-                      ' rhsm-jenkins-slave2.usersys.redhat.com' +
-                      ' rhsm-jenkins-slave3.usersys.redhat.com' +
-                      ' rhsm-jenkins-slave4.usersys.redhat.com' +
-                      ' rhsm-jenkins-slave5.usersys.redhat.com'
-jenkinsSlavesScript = '["rhsm-jenkins-slave1.usersys.redhat.com",' +
-                       '"rhsm-jenkins-slave2.usersys.redhat.com",' +
-                       '"rhsm-jenkins-slave3.usersys.redhat.com",' +
-                       '"rhsm-jenkins-slave4.usersys.redhat.com",' +
-                       '"rhsm-jenkins-slave5.usersys.redhat.com"]'
+jenkinsSlavesScript = '["rhsm-jenkins-slave1.usersys.redhat.com:selected",' +
+                       '"rhsm-jenkins-slave2.usersys.redhat.com:selected",' +
+                       '"rhsm-jenkins-slave3.usersys.redhat.com:selected",' +
+                       '"rhsm-jenkins-slave4.usersys.redhat.com:selected",' +
+                       '"rhsm-jenkins-slave5.usersys.redhat.com:selected"]'
 
 job("Docker Cleanup"){
     description('This job deletes unused docker images across all the slave nodes.')
@@ -19,7 +14,6 @@ job("Docker Cleanup"){
             choiceType('MULTI_SELECT')
             groovyScript {
                 script(jenkinsSlavesScript)
-                fallbackScript(jenkinsSlavesDefault)
             }
         }
     }
