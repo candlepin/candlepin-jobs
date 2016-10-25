@@ -1,15 +1,9 @@
 String submanRepo = 'candlepin/subscription-manager'
+String desc = "Run 'make stylish' on github pull requests for subscription-manager.\n\n" +
+              "This runs against pull request branches."
 
-// not sure if we want to stick this in a folder yet
-//String basePath = 'Scratch'
-
-//folder(basePath) {
-//    description 'This is a scratch job.'
-//}
-
-//job("$basePath/subscription-manager-nose-tests-pr"){
-job("subscription-manager-nose-tests-pr"){
-    description('Welcome to the subscription-manager nose tests!')
+job("subscription-manager-stylish-tests-pr"){
+    description(desc)
     label('rhsm')
     wrappers {
         preBuildCleanup()
@@ -40,23 +34,17 @@ job("subscription-manager-nose-tests-pr"){
             orgWhitelist('candlepin')
             extensions {
                 commitStatus {
-                    context('jenkins-nosetests')
+                    context('jenkins-stylish')
                 }
             }
         }
     }
     steps {
-        shell readFileFromWorkspace('resources/subscription-manager-nose-tests.sh')
+        shell readFileFromWorkspace('resources/subscription-manager-stylish-tests.sh')
     }
     publishers {
         archiveArtifacts {
-            pattern('nosetests.xml')
-            pattern('coverage.xml')
-        }
-        publishHtml {
-            report('cover/') {
-                reportName('Coverage module html report')
-            }
+            pattern('stylish_results.txt')
         }
         extendedEmail {
             recipientList('chainsaw@redhat.com')
