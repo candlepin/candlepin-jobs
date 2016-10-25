@@ -6,7 +6,6 @@ This repo is for [Candlepin](https://github.com/candlepin/candlepin) Jenkins Job
 
     .
     ├── jobs                    # DSL script files
-    │   └── examples            # example DSL scripts
     ├── resources               # resources for DSL scripts
     ├── src
     │   ├── main
@@ -31,7 +30,7 @@ will loop through all DSL files and make sure they don't throw any exceptions wh
 
 ## Debug XML
 
-`./gradlew debugXml -Dpattern=jobs/**/*job.groovy` runs the DSL and writes the XML output to files to `build/debug-xml`.
+`./gradlew debugXml -Dpattern=jobs/**/*Job.groovy` runs the DSL and writes the XML output to files to `build/debug-xml`.
 
 This can be useful if you want to inspect the generated XML before check-in.
 
@@ -43,7 +42,7 @@ Or manually create a job with the same structure:
 
 * Invoke Gradle script → Use Gradle Wrapper: `true`
 * Invoke Gradle script → Tasks: `clean test`
-* Process Job DSLs → DSL Scripts: `jobs/**/*job.groovy`
+* Process Job DSLs → DSL Scripts: `jobs/**/*Job.groovy`
 * Process Job DSLs → Additional classpath: `src/main/groovy`
 * Publish JUnit test result report → Test report XMLs: `build/test-results/**/*.xml`
 
