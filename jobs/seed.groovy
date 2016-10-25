@@ -1,4 +1,4 @@
-job('seed') {
+job('Candlepin Seed Job') {
     scm {
         github 'Lorquas/candlepin-jobs'
     }
