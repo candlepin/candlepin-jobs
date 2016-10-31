@@ -12,4 +12,11 @@ job('Candlepin Seed Job') {
             additionalClasspath 'src/main/groovy'
         }
     }
+    publishers {
+        publishHtml {
+            report('build/reports/tests/') {
+                reportName('Grade Test Results')
+            }
+        }
+    }
 }
