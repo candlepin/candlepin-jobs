@@ -58,3 +58,11 @@ DSL outside of the Jenkins environment or if you want to create the seed job fro
 * `baseUrl` - base URL of Jenkins server
 * `username` - Jenkins username, if secured
 * `password` - Jenkins password or token, if secured
+
+## Vagrant
+
+`vagrant up` with vagrant installed will spawn a VM that runs an instance of
+Jenkins, with necessary plugins and a modified seed job that will generate the
+jobs based on the vagrant shared folder (the top-level directory of this repo).
+Using this, you can make changes, run `vagrant rsync`, run the seed job, and
+see the results.

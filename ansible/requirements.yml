@@ -1,0 +1,8 @@
+---
+- src: https://github.com/geerlingguy/ansible-role-jenkins
+  version: 2.6.0
+  name: geerlingguy.jenkins
+
+- src: https://github.com/geerlingguy/ansible-role-java
+  version: 1.7.0
+  name: geerlingguy.java
