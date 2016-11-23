@@ -13,6 +13,7 @@
       - ws-cleanup
       - htmlpublisher
       - ansicolor
+      - ansible
   roles:
     - geerlingguy.jenkins
 
