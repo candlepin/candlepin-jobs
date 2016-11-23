@@ -36,7 +36,7 @@ class JobScriptsSpec extends Specification {
     static List<File> getJobFiles() {
         List<File> files = []
         new File('jobs').eachFileRecurse(FileType.FILES) {
-            if (it.name.endsWith('.groovy')) {
+            if (it.name.endsWith('.groovy') && !it.name.startsWith('candlepin')) {
                 files << it
             }
         }
