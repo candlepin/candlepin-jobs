@@ -18,8 +18,14 @@ Vagrant.configure(2) do |config|
     ansible.playbook = "ansible/bootstrap.yml"
   end
 
-  config.vm.provision "ansible_local" do |ansible|
+  config.vm.provision "ansible" do |ansible|
     ansible.playbook = "ansible/vagrant.yml"
     ansible.galaxy_role_file = "ansible/requirements.yml"
+    ansible.extra_vars = {}
+    ENV.each do |key, value|
+      if key.start_with?('CANDLEPIN') then
+        ansible.extra_vars[key] = value
+      end
+    end
   end
 end
