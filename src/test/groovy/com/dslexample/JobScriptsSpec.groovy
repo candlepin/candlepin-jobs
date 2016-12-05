@@ -1,9 +1,12 @@
 package com.dslexample
 
 import groovy.io.FileType
+import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.DslScriptLoader
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.plugin.ConfigFileProviderHelper
 import javaposse.jobdsl.plugin.JenkinsJobManagement
+import org.jenkinsci.plugins.configfiles.custom.CustomConfig
 import org.junit.ClassRule
 import org.jvnet.hudson.test.JenkinsRule
 import spock.lang.Shared
@@ -22,6 +25,9 @@ class JobScriptsSpec extends Specification {
     void 'test script #file.name'(File file) {
         given:
         JobManagement jm = new JenkinsJobManagement(System.out, [:], new File('.'))
+        def configProvider = ConfigFileProviderHelper.findConfigProvider(ConfigFileType.Custom)
+        CustomConfig config = new CustomConfig('id', 'candlepinPerformanceInventory', 'comment', 'content')
+        configProvider.save(config)
 
         when:
         new DslScriptLoader(jm).runScript(file.text)
@@ -36,7 +42,7 @@ class JobScriptsSpec extends Specification {
     static List<File> getJobFiles() {
         List<File> files = []
         new File('jobs').eachFileRecurse(FileType.FILES) {
-            if (it.name.endsWith('.groovy') && !it.name.startsWith('candlepin')) {
+            if (it.name.endsWith('.groovy')) {
                 files << it
             }
         }
