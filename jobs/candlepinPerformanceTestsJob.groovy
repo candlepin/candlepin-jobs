@@ -31,13 +31,14 @@ job("Candlepin Performance"){
         ansiblePlaybook('ansible/candlepin.yml') {
             inventoryPath('${PERF_INVENTORY}')
             credentialsId('fe2c79db-3166-4e61-8996-a8e7de7fbb5c')
-            additionalParameters('--extra-vars=\"candlepin_branch: ${candlepin_branch} caracalla_branch: ${caracalla_branch} jmeter_test_properties=${jmeter_test_properties}\"')
+            additionalParameters('--extra-vars=\"candlepin_branch=${candlepin_branch} caracalla_branch=${caracalla_branch} jmeter_test_properties=${jmeter_test_properties}\"')
             colorizedOutput(true)
         }
     }
     publishers {
         archiveArtifacts {
             pattern('ansible/results.jtl')
+            pattern('ansible/parsed-results.txt')
         }
     }
 }
