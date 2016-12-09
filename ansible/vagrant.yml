@@ -3,19 +3,20 @@
   become: true
   vars:
     jenkins_plugins:
-      - git
-      - job-dsl
-      - ircbot
-      - github
-      - ghprb
+      - ansible
+      - ansicolor
       - email-ext
+      - envinject
+      - ghprb
+      - git
+      - github
+      - htmlpublisher
+      - ircbot
+      - job-dsl
       - uno-choice
       - ws-cleanup
-      - htmlpublisher
-      - ansicolor
-      - ansible
-      - envinject
     CANDLEPIN_JENKINS_GITHUB_ORG: candlepin
+
   roles:
     - geerlingguy.jenkins
 
