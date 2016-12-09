@@ -13,6 +13,7 @@
       - ws-cleanup
       - htmlpublisher
       - ansicolor
+      - ansible
   roles:
     - geerlingguy.jenkins
 
@@ -23,6 +24,8 @@
 
     - name: (re)generate development seed job
       command: ./gradlew rest -Dpattern=ansible/seed.groovy -DbaseUrl=http://{{ jenkins_hostname }}:{{ jenkins_http_port }}/ -Dusername={{ jenkins_admin_username }} -Dpassword={{ jenkins_admin_password }} chdir=/vagrant
+      tags:
+        - skip_ansible_lint
 
   handlers:
     - name: reload postfix config
