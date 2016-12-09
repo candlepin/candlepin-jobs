@@ -66,3 +66,6 @@ Jenkins, with necessary plugins and a modified seed job that will generate the
 jobs based on the vagrant shared folder (the top-level directory of this repo).
 Using this, you can make changes, run `vagrant rsync`, run the seed job, and
 see the results.
+
+If you would like to test the jobs against your own repos, you can set `CANDLEPIN_JENKINS_GITHUB_ORG` to your username
+(or another org where appropriate repos exist).

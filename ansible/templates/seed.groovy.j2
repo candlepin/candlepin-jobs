@@ -1,5 +1,6 @@
 job('Development Seed Job') {
     customWorkspace('/vagrant/')
+    environmentVariables(CANDLEPIN_JENKINS_GITHUB_ORG: '{{ CANDLEPIN_JENKINS_GITHUB_ORG }}')
     steps {
         gradle 'clean test'
         dsl {

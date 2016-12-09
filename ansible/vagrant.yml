@@ -14,6 +14,8 @@
       - htmlpublisher
       - ansicolor
       - ansible
+      - envinject
+    CANDLEPIN_JENKINS_GITHUB_ORG: candlepin
   roles:
     - geerlingguy.jenkins
 
@@ -21,6 +23,9 @@
     - name: disable mail relay
       lineinfile: dest=/etc/postfix/main.cf line="default_transport = local:$myhostname"
       notify: reload postfix config
+
+    - name: template development seed job
+      template: src=templates/seed.groovy.j2 dest=/vagrant/ansible/seed.groovy
 
     - name: (re)generate development seed job
       command: ./gradlew rest -Dpattern=ansible/seed.groovy -DbaseUrl=http://{{ jenkins_hostname }}:{{ jenkins_http_port }}/ -Dusername={{ jenkins_admin_username }} -Dpassword={{ jenkins_admin_password }} chdir=/vagrant

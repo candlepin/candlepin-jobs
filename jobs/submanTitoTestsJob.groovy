@@ -23,5 +23,6 @@ def titoJob = job("subscription-manager-tito-tests-pr"){
     }
 }
 
-rhsmLib.addPullRequester(titoJob, rhsmLib.submanRepo, 'jenkins-tito')
+String githubOrg = binding.variables['CANDLEPIN_JENKINS_GITHUB_ORG'] ?: 'candlepin'
+rhsmLib.addPullRequester(titoJob, githubOrg, rhsmLib.submanRepo, 'jenkins-tito')
 rhsmLib.addCandlepinNotifier(titoJob)

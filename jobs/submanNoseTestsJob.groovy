@@ -26,5 +26,6 @@ def rhsmJob = job("subscription-manager-nose-tests-pr"){
     }
 }
 
-rhsmLib.addPullRequester(rhsmJob, rhsmLib.submanRepo, 'jenkins-nosetests')
+String githubOrg = binding.variables['CANDLEPIN_JENKINS_GITHUB_ORG'] ?: 'candlepin'
+rhsmLib.addPullRequester(rhsmJob, githubOrg, rhsmLib.submanRepo, 'jenkins-nosetests')
 rhsmLib.addCandlepinNotifier(rhsmJob)

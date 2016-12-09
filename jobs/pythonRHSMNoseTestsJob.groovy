@@ -24,5 +24,6 @@ def pyrhsmJob = job("python-rhsm-nose-tests-pr-builder"){
     }
 }
 
-rhsmLib.addPullRequester(pyrhsmJob, rhsmLib.pythonRHSMRepo, 'jenkins-nose-tests')
+String githubOrg = binding.variables['CANDLEPIN_JENKINS_GITHUB_ORG'] ?: 'candlepin'
+rhsmLib.addPullRequester(pyrhsmJob, githubOrg, rhsmLib.pythonRHSMRepo, 'jenkins-nose-tests')
 rhsmLib.addCandlepinNotifier(pyrhsmJob)

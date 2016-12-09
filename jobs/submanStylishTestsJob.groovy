@@ -23,5 +23,6 @@ def stylishJob = job("subscription-manager-stylish-tests-pr"){
     }
 }
 
-rhsmLib.addPullRequester(stylishJob, rhsmLib.submanRepo, 'jenkins-stylish')
+String githubOrg = binding.variables['CANDLEPIN_JENKINS_GITHUB_ORG'] ?: 'candlepin'
+rhsmLib.addPullRequester(stylishJob, githubOrg, rhsmLib.submanRepo, 'jenkins-stylish')
 rhsmLib.addCandlepinNotifier(stylishJob)

@@ -3,11 +3,11 @@ package jobLib
 import javaposse.jobdsl.dsl.Job
 
 class rhsmLib {
-    static String candlepinRepo = "candlepin/candlepin"
-    static String pythonRHSMRepo = "candlepin/python-rhsm"
-    static String submanRepo = "candlepin/subscription-manager"
+    static String candlepinRepo = "candlepin"
+    static String pythonRHSMRepo = "python-rhsm"
+    static String submanRepo = "subscription-manager"
 
-    static addPullRequester = { Job job, String repo, String name ->
+    static addPullRequester = { Job job, String githubOrg, String repo, String name ->
         job.with {
             parameters {
                 stringParam('sha1', 'master', 'GIT commit hash of what you want to test.')
@@ -15,7 +15,7 @@ class rhsmLib {
             scm {
                 git {
                     remote {
-                        github(repo)
+                        github("${githubOrg}/${repo}")
                         refspec('+refs/pull/*:refs/remotes/origin/pr/*')
                     }
                     branch('${sha1}')
@@ -28,7 +28,7 @@ class rhsmLib {
                     permitAll(false)
                     allowMembersOfWhitelistedOrgsAsAdmin(true)
                     cron('H/5 * * * *')
-                    orgWhitelist('candlepin')
+                    orgWhitelist(githubOrg)
                     extensions {
                         commitStatus {
                             context(name)
