@@ -18,7 +18,7 @@ This repo is for [Candlepin](https://github.com/candlepin/candlepin) Jenkins Job
 
 # Script Examples
 
-This repo is based off the [Job DSL example project](https://github.com/jenkinsci/job-dsl-plugin). Examples have been moved to the jobs/examples folder for reference. Check out [this presentation](https://www.youtube.com/wa    tch?v=SSK_JaBacE0) for a walkthrough of this example (starts around 14:00).
+This repo is based off the [Job DSL example project](https://github.com/jenkinsci/job-dsl-plugin). Examples have been moved to the jobs/examples folder for reference. Check out [this presentation](https://www.youtube.com/watch?v=SSK_JaBacE0) for a walkthrough of this example (starts around 14:00).
 
 
 ## Testing
