@@ -13,10 +13,13 @@
       - htmlpublisher
       - ircbot
       - job-dsl
+      - parameterized-trigger
       - uno-choice
+      - workflow-aggregator
       - ws-cleanup
     CANDLEPIN_JENKINS_GITHUB_ORG: candlepin
-
+    jenkins_dummy_configs:
+      - candlepinPerformanceInventory
   roles:
     - geerlingguy.jenkins
 
@@ -32,6 +35,17 @@
       command: ./gradlew rest -Dpattern=ansible/seed.groovy -DbaseUrl=http://{{ jenkins_hostname }}:{{ jenkins_http_port }}/ -Dusername={{ jenkins_admin_username }} -Dpassword={{ jenkins_admin_password }} chdir=/vagrant
       tags:
         - skip_ansible_lint
+
+    - name: create dummy config files
+      shell: >
+        echo "javaposse.jobdsl.plugin.ConfigFileProviderHelper.findConfigProvider(javaposse.jobdsl.dsl.ConfigFileType.Custom).save(new org.jenkinsci.plugins.configfiles.custom.CustomConfig('{{ item }}', '{{ item }}', 'dummy file', ''))" |
+        java -jar {{ jenkins_jar_location }}
+        -s http://{{ jenkins_hostname }}:{{ jenkins_http_port }}{{ jenkins_url_prefix | default('') }}/
+        groovy =
+        --username {{ jenkins_admin_username }} --password {{ jenkins_admin_password }}
+      with_items: "{{ jenkins_dummy_configs }}"
+      tags:
+        - dummyconfig
 
   handlers:
     - name: reload postfix config
