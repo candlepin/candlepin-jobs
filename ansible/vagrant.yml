@@ -5,6 +5,7 @@
     jenkins_plugins:
       - ansible
       - ansicolor
+      - config-file-provider
       - email-ext
       - envinject
       - ghprb
@@ -13,10 +14,11 @@
       - htmlpublisher
       - ircbot
       - job-dsl
+      - parameterized-trigger
       - uno-choice
+      - workflow-aggregator
       - ws-cleanup
     CANDLEPIN_JENKINS_GITHUB_ORG: candlepin
-
   roles:
     - geerlingguy.jenkins
 
@@ -36,3 +38,29 @@
   handlers:
     - name: reload postfix config
       service: name=postfix state=reloaded
+
+- hosts: all
+  become: true
+  vars:
+    jenkins_dummy_configs:
+      - candlepinPerformanceInventory
+
+  tasks:
+    - name: Wait for Jenkins to start up before proceeding.
+      shell: "curl -D - --silent --max-time 5 http://localhost:8080/cli/"
+      register: result
+      until: (result.stdout.find("403 Forbidden") != -1) or (result.stdout.find("200 OK") != -1) and (result.stdout.find("Please wait while") == -1)
+      retries: "60"
+      delay: "5"
+      changed_when: false
+
+    - name: create dummy config files
+      shell: >
+        echo "javaposse.jobdsl.plugin.ConfigFileProviderHelper.findConfigProvider(javaposse.jobdsl.dsl.ConfigFileType.Custom).save(new org.jenkinsci.plugins.configfiles.custom.CustomConfig('{{ item }}', '{{ item }}', 'dummy file', ''))" |
+        java -jar /opt/jenkins-cli.jar
+        -s http://localhost:8080/
+        groovy =
+        --username admin --password admin
+      with_items: "{{ jenkins_dummy_configs }}"
+      tags:
+        - dummyconfig

@@ -5,3 +5,5 @@ out/
 .idea
 .DS_Store
 .vagrant
+*.retry
+ansible/roles/geerlingguy*

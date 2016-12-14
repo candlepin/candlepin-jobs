@@ -6,8 +6,9 @@ class rhsmLib {
     static String candlepinRepo = "candlepin"
     static String pythonRHSMRepo = "python-rhsm"
     static String submanRepo = "subscription-manager"
+    static String submanJobFolder = "subscription-manager"
 
-    static addPullRequester = { Job job, String githubOrg, String repo, String name ->
+    static addPullRequester = { Job job, String githubOrg, String repo, String name, boolean trigger = true, boolean notify = true ->
         job.with {
             parameters {
                 stringParam('sha1', 'master', 'GIT commit hash of what you want to test.')
@@ -21,17 +22,21 @@ class rhsmLib {
                     branch('${sha1}')
                 }
             }
-            triggers {
-                githubPullRequest {
-                    onlyTriggerPhrase(false)
-                    useGitHubHooks(false)
-                    permitAll(false)
-                    allowMembersOfWhitelistedOrgsAsAdmin(true)
-                    cron('H/5 * * * *')
-                    orgWhitelist(githubOrg)
-                    extensions {
-                        commitStatus {
-                            context(name)
+            if (trigger) {
+                triggers {
+                    githubPullRequest {
+                        onlyTriggerPhrase(false)
+                        useGitHubHooks(false)
+                        permitAll(false)
+                        allowMembersOfWhitelistedOrgsAsAdmin(true)
+                        cron('H/5 * * * *')
+                        orgWhitelist(githubOrg)
+                        if (notify) {
+                            extensions {
+                                commitStatus {
+                                    context(name)
+                                }
+                            }
                         }
                     }
                 }
