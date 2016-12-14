@@ -1,5 +1,8 @@
 job('Candlepin Seed Job') {
     label('rhsm')
+    wrappers {
+        preBuildCleanup()
+    }
     scm {
         github 'candlepin/candlepin-jobs'
     }
