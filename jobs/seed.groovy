@@ -1,4 +1,5 @@
 job('Candlepin Seed Job') {
+    label('rhsm')
     scm {
         github 'candlepin/candlepin-jobs'
     }
