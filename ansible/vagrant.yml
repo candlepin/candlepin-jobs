@@ -5,6 +5,7 @@
     jenkins_plugins:
       - ansible
       - ansicolor
+      - config-file-provider
       - email-ext
       - envinject
       - ghprb
