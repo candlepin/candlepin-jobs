@@ -8,6 +8,10 @@ job('Candlepin Seed Job') {
     steps {
         gradle 'clean test'
         dsl {
+            external 'jobs/folders.groovy'
+            additionalClasspath 'src/main/groovy'
+        }
+        dsl {
             external 'jobs/**/*Job.groovy'
             additionalClasspath 'src/main/groovy'
         }

@@ -1,6 +1,9 @@
 import jobLib.rhsmLib
 
-def rhsmJob = job("subscription-manager-nose-tests-pr"){
+String baseFolder = rhsmLib.submanJobFolder
+
+def rhsmJob = job("$baseFolder/subscription-manager-nose-tests-pr"){
+    previousNames("subscription-manager-nose-tests-pr")
     description('Welcome to the subscription-manager nose tests!')
     label('rhsm')
     wrappers {

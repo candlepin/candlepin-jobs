@@ -1,6 +1,7 @@
 import jobLib.rhsmLib
+String baseFolder = rhsmLib.submanJobFolder
 
-pipeline_helper = job('subscription-manager pipeline helper') {
+pipeline_helper = job("$baseFolder/subscription-manager pipeline helper") {
     logRotator {
         numToKeep(0)
     }
@@ -15,7 +16,7 @@ pipeline_helper = job('subscription-manager pipeline helper') {
     }
 }
 
-pipeline = pipelineJob('subscription-manager') {
+pipeline = pipelineJob("$baseFolder/subscription-manager") {
     description('Delivery Pipeline for subscription-manager')
     parameters {
         stringParam('sha1', 'master', 'GIT commit hash of what you want to test.')
