@@ -46,6 +46,17 @@ dependencies {
     testPlugins 'org.jenkins-ci.plugins:ghprb:1.31.4'
     testPlugins 'com.coravy.hudson.plugins.github:github:1.19.0'
     testPlugins 'org.jenkins-ci.plugins:config-file-provider:2.9.3'
+    testPlugins 'org.jenkins-ci.plugins:ansicolor:0.4.3'
+    testPlugins 'org.jenkins-ci.plugins:cloudbees-folder:5.15'
+    testPlugins 'org.jvnet.hudson.plugins:ircbot:2.27'
+    testPlugins 'org.jenkins-ci.plugins:htmlpublisher:1.11'
+    testPlugins 'org.biouno:uno-choice:1.5.2'
+    testPlugins 'org.jenkins-ci.plugins:ws-cleanup:0.32'
+    testPlugins 'org.jenkins-ci.plugins:email-ext:2.52'
+    testPlugins 'org.jenkins-ci.plugins:parameterized-trigger:2.32'
+    testPlugins 'org.jenkins-ci.plugins.workflow:workflow-aggregator:2.4'
+    testPlugins 'com.cloudbees.jenkins.plugins:cloudbees-credentials:3.3'
+
 
     // for the RestApiScriptRunner
     compile('org.codehaus.groovy.modules.http-builder:http-builder:0.7.2') {
