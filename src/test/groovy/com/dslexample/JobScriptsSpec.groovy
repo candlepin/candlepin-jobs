@@ -28,6 +28,9 @@ class JobScriptsSpec extends Specification {
         def configProvider = ConfigFileProviderHelper.findConfigProvider(ConfigFileType.Custom)
         CustomConfig config = new CustomConfig('id', 'candlepinPerformanceInventory', 'comment', 'content')
         configProvider.save(config)
+        // must run the folders script first for testing
+        String folders = new File('jobs/folders.groovy').text
+        new DslScriptLoader(jm).runScript(folders)
 
         when:
         new DslScriptLoader(jm).runScript(file.text)
@@ -42,7 +45,7 @@ class JobScriptsSpec extends Specification {
     static List<File> getJobFiles() {
         List<File> files = []
         new File('jobs').eachFileRecurse(FileType.FILES) {
-            if (it.name.endsWith('.groovy')) {
+            if (it.name.endsWith('Job.groovy')) {
                 files << it
             }
         }
