@@ -31,10 +31,15 @@ class rhsmLib {
                         allowMembersOfWhitelistedOrgsAsAdmin(true)
                         cron('H/5 * * * *')
                         orgWhitelist(githubOrg)
-                        if (notify) {
-                            extensions {
-                                commitStatus {
-                                    context(name)
+                        extensions {
+                            commitStatus {
+                                context(name)
+                                if (!notify) {
+                                    triggeredStatus('--none--')
+                                    startedStatus('--none--')
+                                    completedStatus('SUCCESS', '--none--')
+                                    completedStatus('FAILURE', '--none--')
+                                    completedStatus('ERROR', '--none--')
                                 }
                             }
                         }
