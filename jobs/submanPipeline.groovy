@@ -1,7 +1,4 @@
 import hudson.plugins.ircbot.v2.IRCConnectionProvider
-import jobLib.rhsmLib
-
-String baseFolder = rhsmLib.submanJobFolder
 
 String REPO = 'https://github.com/candlepin/subscription-manager'
 
@@ -50,21 +47,21 @@ stage('test') {
     try {
         parallel(
             'nose': {
-                build(job: "$baseFolder/subscription-manager-nose-tests-pr", parameters: [[
+                build(job: "subscription-manager-nose-tests-pr", parameters: [[
                     $class: 'StringParameterValue',
                     name: 'sha1',
                     value: "${sha1}"
                 ]])
             },
             'stylish': {
-                build(job: "$baseFolder/subscription-manager-stylish-tests-pr", parameters: [[
+                build(job: "subscription-manager-stylish-tests-pr", parameters: [[
                     $class: 'StringParameterValue',
                     name: 'sha1',
                     value: "${sha1}"
                 ]])
             },
             'tito': {
-                build(job: "$baseFolder/subscription-manager-tito-tests-pr", parameters: [[
+                build(job: "subscription-manager-tito-tests-pr", parameters: [[
                     $class: 'StringParameterValue',
                     name: 'sha1',
                     value: "${sha1}"
