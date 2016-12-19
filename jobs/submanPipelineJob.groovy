@@ -3,7 +3,7 @@ String baseFolder = rhsmLib.submanJobFolder
 
 pipeline_helper = job("$baseFolder/subscription-manager pipeline helper") {
     logRotator {
-        numToKeep(0)
+        numToKeep(1)
     }
     steps {
         downstreamParameterized {
