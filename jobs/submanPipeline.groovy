@@ -1,34 +1,22 @@
 import hudson.plugins.ircbot.v2.IRCConnectionProvider
+import groovy.json.StringEscapeUtils
 
-String REPO = 'https://github.com/candlepin/subscription-manager'
+static String REPO = 'https://github.com/candlepin/subscription-manager'
 
-def setCommitStatus = { repo, sha1, state, message ->
+void setCommitStatus(String repo, String sha1, String state, String message) {
+    String GITHUB_API_TOKEN_CREDENTIALS_ID = '830050e0-ece9-4878-8b3d-2779cfe76abe'
     try {
-        step([
-            $class: 'GitHubCommitStatusSetter',
-            commitShaSource: [
-                $class: 'ManuallyEnteredShaSource',
-                sha   : sha1,
-            ],
-            contextSource: [
-                $class: 'ManuallyEnteredCommitContextSource',
-                context: 'jenkins-pipeline',
-            ],
-            reposSource: [
-                $class: 'ManuallyEnteredRepositorySource',
-                url   : repo,
-            ],
-            statusResultSource: [
-                $class : 'ConditionalStatusResultSource',
-                results: [[
-                    $class : 'AnyBuildResult',
-                    message: message,
-                    state  : state,
-                ]]
-            ],
-        ])
+        String pattern = "https://github.com/([^/]*)/([^/]*)/?"
+        String GITHUB_ORG = (repo =~ pattern)[0][1]
+        String GITHUB_REPO = (repo =~ pattern)[0][2]
+        withCredentials([string(credentialsId: GITHUB_API_TOKEN_CREDENTIALS_ID, variable: 'GITHUB_API_TOKEN')]) {
+            sh """curl "https://api.github.com/repos/$GITHUB_ORG/$GITHUB_REPO/statuses/$sha1?access_token=$GITHUB_API_TOKEN" \\
+                    -H "Content-Type: application/json" \\
+                    -d "{\\"state\\": \\"${state.toLowerCase()}\\", \\"description\\": \\"${StringEscapeUtils.escapeJavaScript(message)}\\", \\"target_url\\": \\"$BUILD_URL\\", \\"context\\": \\"jenkins-pipeline\\"}" """
+        }
     } catch(e) {
         echo "Unable to set status for ${sha1}: ${e}"
+        echo "Check that the API token is set as a \"secret text\" credential with ID ${GITHUB_API_TOKEN_CREDENTIALS_ID}"
     }
 }
 

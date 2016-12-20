@@ -6,6 +6,7 @@
       - ansible
       - ansicolor
       - config-file-provider
+      - credentials-binding
       - email-ext
       - envinject
       - ghprb
