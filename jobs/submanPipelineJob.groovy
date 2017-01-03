@@ -10,6 +10,7 @@ pipeline_helper = job("$baseFolder/subscription-manager pipeline helper") {
             trigger('subscription-manager') {
                 parameters {
                     predefinedProp('sha1', '${GIT_COMMIT}')
+                    predefinedProp('ghprbActualCommit', '${ghprbActualCommit}')
                 }
             }
         }

@@ -30,7 +30,7 @@ def sendIrcNotification = { channel, text ->
 
 stage('test') {
     node('master') {
-        setCommitStatus(REPO, "${sha1}", 'Pending', 'Tests are pending.')
+        setCommitStatus(REPO, "${ghprbActualCommit}", 'Pending', 'Tests are pending.')
     }
     try {
         parallel(
@@ -58,12 +58,12 @@ stage('test') {
         )
         node('master') {
             currentBuild.result = 'SUCCESS'
-            setCommitStatus(REPO, "${sha1}", 'SUCCESS', 'All tests passed.')
+            setCommitStatus(REPO, "${ghprbActualCommit}", 'SUCCESS', 'All tests passed.')
         }
     } catch(e) {
         node('master') {
             currentBuild.result = 'FAILURE'
-            setCommitStatus(REPO, "${sha1}", 'FAILURE', 'One or more tests failed.')
+            setCommitStatus(REPO, "${ghprbActualCommit}", 'FAILURE', 'One or more tests failed.')
 
             String subject = "subscription-manager - build # ${env.BUILD_NUMBER} - Failure"
             emailext(
