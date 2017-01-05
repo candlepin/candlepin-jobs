@@ -39,6 +39,7 @@ job("Candlepin Performance"){
         archiveArtifacts {
             pattern('ansible/results.jtl')
             pattern('ansible/parsed-results.txt')
+            pattern('ansible/candlepin.log')
         }
     }
 }
