@@ -21,6 +21,7 @@ pipeline = pipelineJob("$baseFolder/subscription-manager") {
     description('Delivery Pipeline for subscription-manager')
     parameters {
         stringParam('sha1', 'master', 'GIT commit hash of what you want to test.')
+        stringParam('ghprbActualCommit', null, 'commit used to report status against a GitHub PR')
     }
     logRotator {
         numToKeep(20)

@@ -16,6 +16,7 @@
       - ircbot
       - job-dsl
       - parameterized-trigger
+      - pipeline-githubnotify-step
       - uno-choice
       - workflow-aggregator
       - ws-cleanup
