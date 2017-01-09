@@ -93,7 +93,7 @@ stage('test') {
         },
     )
     node('master') {
-        def buildPassed = results.find { it != 'SUCCESS' } == null
+        def buildPassed = !results.contains('FAILURE') && !results.contains('ABORTED') && !results.contains('UNSTABLE')
         if (!buildPassed) {
             currentBuild.result = 'FAILURE'
             githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
