@@ -11,7 +11,8 @@ job("Candlepin Performance"){
     parameters {
         stringParam('candlepin_branch', 'master', 'name of the candlepin branch to test')
         stringParam('caracalla_branch', 'master', 'name of the caracalla branch to use for the test')
-        stringParam('jmeter_test_properties', '[\'DURATION_SECONDS=3600\',\'SAMPLES_PER_MINUTE=6900\']', 'override test duration, sample size(small=180, medium = 900, large=6900), and other properties.')
+        stringParam('candlepin_throughput_properties', '[\'DURATION_SECONDS=3600\',\'SAMPLES_PER_MINUTE=6900\']', 'override test duration, sample size(small=180, medium = 900, large=6900), and other properties.')
+        choiceParam('jmeter_tests', ['candlepin-throughput','CandlepinAPI','ImportExport'], 'what tests to run.')
     }
     scm {
         git {
@@ -31,15 +32,13 @@ job("Candlepin Performance"){
         ansiblePlaybook('ansible/candlepin.yml') {
             inventoryPath('${PERF_INVENTORY}')
             credentialsId('fe2c79db-3166-4e61-8996-a8e7de7fbb5c')
-            additionalParameters('--extra-vars=\"candlepin_branch=${candlepin_branch} caracalla_branch=${caracalla_branch} jmeter_test_properties=${jmeter_test_properties}\"')
+            additionalParameters('--extra-vars=\"candlepin_branch=${candlepin_branch} caracalla_branch=${caracalla_branch} candlepin_throughput_properties=${candlepin_throughput_properties} jmeter_tests=${jmeter_tests}\"')
             colorizedOutput(true)
         }
     }
     publishers {
         archiveArtifacts {
-            pattern('ansible/results.jtl')
-            pattern('ansible/parsed-results.txt')
-            pattern('ansible/candlepin.log')
+            pattern('ansible/artifacts/*.*')
         }
     }
 }
