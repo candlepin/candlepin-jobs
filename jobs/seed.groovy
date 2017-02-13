@@ -4,7 +4,7 @@ job('Candlepin Seed Job') {
         preBuildCleanup()
     }
     scm {
-        github 'candlepin/candlepin-jobs'
+        github('candlepin/candlepin-jobs', 'master')
     }
     triggers {
         scm 'H/5 * * * *'
