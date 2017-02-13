@@ -12,7 +12,7 @@ job("Candlepin Performance"){
         stringParam('candlepin_branch', 'master', 'name of the candlepin branch to test')
         stringParam('caracalla_branch', 'master', 'name of the caracalla branch to use for the test')
         stringParam('candlepin_throughput_properties', '[\'DURATION_SECONDS=3600\',\'SAMPLES_PER_MINUTE=6900\']', 'override test duration, sample size(small=180, medium = 900, large=6900), and other properties.')
-        choiceParam('jmeter_tests', ['candlepin-throughput','CandlepinAPI','ImportExport'], 'what tests to run.')
+        choiceParam('jmeter_tests', ['candlepin-throughput','loop-over-apis','ImportExport'], 'what tests to run.')
     }
     scm {
         git {
