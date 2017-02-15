@@ -31,12 +31,22 @@ def sendIrcNotification(channel, text) {
 
 def githubStatus(Map args) {
     description = args.get('description') ?: STATUS_MESSAGE_MAP[args.status]
-    githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-            status: args.status, description: description, context: args.context, targetUrl: args.targetUrl)
+    try {
+        githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
+                status: args.status, description: description, context: args.context, targetUrl: args.targetUrl)
+    } catch (e) {
+        echo "Unable to update GitHub status (commit: ${GITHUB_COMMIT}, status: ${args.status}, context: ${args.context})"
+    }
 }
 
 def buildWithNotifications(Map args) {
-    boolean enabled = Jenkins.instance.getItem(args.job, currentBuild.rawBuild.parent, Item.class).buildable
+    boolean enabled = false
+    try {
+        enabled = Jenkins.instance.getItem(args.job, currentBuild.rawBuild.parent, Item.class).buildable
+    } catch (e) {
+        echo "Unable to get job status for ${args.job}; skipping build. Does the job exist?"
+        return 'SUCCESS'
+    }
     if (!enabled) {
         echo "Skipping ${args.job} as it is disabled."
         return 'SUCCESS'
@@ -76,7 +86,7 @@ stage('test') {
         },
         'performance': {
             if (!PERFORMANCE_BRANCH_BLACKLIST.contains(ghprbTargetBranch)) {
-                results.add(buildWithNotifications(context: 'jenkins-candlepin-performance', job: "Candlepin Performance", parameters: [[
+                results.add(buildWithNotifications(context: 'jenkins-candlepin-performance', job: "CandlepinPerformance", parameters: [[
                      $class: 'StringParameterValue',
                      name  : 'ghprbActualCommit',
                      value : "${sha1}"

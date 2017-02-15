@@ -5,7 +5,7 @@ String githubOrg = binding.variables['CANDLEPIN_JENKINS_GITHUB_ORG'] ?: 'candlep
 
 def DISTROS = [ // values can be found via `osc repos`
     'opensuse42': 'openSUSE_Leap_42.2',
-    'sles11': 'SUSE_SLE-11_SP3_standard',
+    // 'sles11': 'SUSE_SLE-11_SP3_standard',  FIXME python-six prevents sles11 from building for now
     'sles12': 'SLE_12_SP1',
 ]
 
@@ -28,7 +28,7 @@ DISTROS.each { name, repo_name ->
             numToKeep(20)
         }
         steps {
-            shell "scripts/suse_build.sh \"\${obs_project_name}\" \"${repo_name}\" -k ."
+            shell "scripts/suse_build.sh \"\${obs_project_name}\" \"${repo_name}\" -k \$(pwd)"
             shell '''
 # adapted from QE-RPMs jobs (thanks jsefler)
 BUILD_ARCHS=x86_64

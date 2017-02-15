@@ -1,16 +1,22 @@
 import hudson.plugins.ircbot.v2.IRCConnectionProvider
-import groovy.json.StringEscapeUtils
+import jenkins.model.Jenkins
 
-String REPO = 'https://github.com/candlepin/subscription-manager'
-String GITHUB_CREDENTIALS_ID = 'github-api-token-as-username-password'
-String GITHUB_ACCOUNT = 'candlepin'
-String GITHUB_REPO = 'subscription-manager'
-String GITHUB_COMMIT = ghprbActualCommit ?: sha1
-String PENDING_MESSAGE = 'Build has been scheduled.'
-String SUCCESS_MESSAGE = 'Test(s) passed.'
-String FAILURE_MESSAGE = 'Test(s) failed.'
+REPO = 'https://github.com/candlepin/subscription-manager'
+GITHUB_CREDENTIALS_ID = 'github-api-token-as-username-password'
+GITHUB_ACCOUNT = 'candlepin'
+GITHUB_REPO = 'subscription-manager'
+GITHUB_COMMIT = ghprbActualCommit ?: sha1
+PENDING_MESSAGE = 'Build has been scheduled.'
+SUCCESS_MESSAGE = 'Test(s) passed.'
+FAILURE_MESSAGE = 'Test(s) failed.'
 
-def sendIrcNotification = { channel, text ->
+STATUS_MESSAGE_MAP = [
+    'PENDING': PENDING_MESSAGE,
+    'SUCCESS': SUCCESS_MESSAGE,
+    'FAILURE': FAILURE_MESSAGE,
+]
+
+def sendIrcNotification(channel, text) {
     try {
         IRCConnectionProvider.getInstance().currentConnection().send(channel, text)
     } catch(e) {
@@ -18,114 +24,114 @@ def sendIrcNotification = { channel, text ->
     }
 }
 
+def githubStatus(Map args) {
+    description = args.get('description') ?: STATUS_MESSAGE_MAP[args.status]
+    try {
+        githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
+                status: args.status, description: description, context: args.context, targetUrl: args.targetUrl)
+    } catch (e) {
+        echo "Unable to update GitHub status (commit: ${GITHUB_COMMIT}, status: ${args.status}, context: ${args.context})"
+    }
+}
+
+def buildWithNotifications(Map args) {
+    boolean enabled = false
+    try {
+        enabled = Jenkins.instance.getItem(args.job, currentBuild.rawBuild.parent, Item.class).buildable
+    } catch (e) {
+        echo "Unable to get job status for ${args.job}; skipping build. Does the job exist?"
+        return 'SUCCESS'
+    }
+    if (!enabled) {
+        echo "Skipping ${args.job} as it is disabled."
+        return 'SUCCESS'
+    }
+    githubStatus(status: 'PENDING', context: args.context, targetUrl: BUILD_URL)
+    def buildInstance = build(job: args.job, parameters: args.parameters, propagate: false)
+    node('master') {
+        if (buildInstance.result == 'SUCCESS') {
+            githubStatus(status: 'SUCCESS', context: args.context, targetUrl: buildInstance.absoluteUrl)
+        }
+        else {
+            githubStatus(status: 'FAILURE', context: args.context, targetUrl: buildInstance.absoluteUrl)
+        }
+    }
+    return buildInstance.result
+}
+
 stage('test') {
     node('master') {
-        githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                status: 'PENDING', description: PENDING_MESSAGE, context: 'jenkins-pipeline', targetUrl: BUILD_URL)
+        githubStatus(status: 'PENDING', context: 'jenkins-pipeline', targetUrl: BUILD_URL)
     }
     def results = []
     parallel(
         'nose': {
-            node('master') {
-                githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                        status: 'PENDING', description: PENDING_MESSAGE, context: 'nose', targetUrl: BUILD_URL)
-            }
-            def buildInstance = build(job: "subscription-manager-nose-tests-pr", parameters: [[
+            results.add(buildWithNotifications(context: 'nose', job: "subscription-manager-nose-tests-pr", parameters: [[
                 $class: 'StringParameterValue',
                 name: 'sha1',
                 value: "${sha1}"
-            ]], propagate: false)
-            node('master') {
-                if (buildInstance.result == 'SUCCESS') {
-                    githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                            status: 'SUCCESS', description: SUCCESS_MESSAGE, context: 'nose', targetUrl: buildInstance.absoluteUrl)
-                }
-                else {
-                    githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                            status: 'FAILURE', description: FAILURE_MESSAGE, context: 'nose', targetUrl: buildInstance.absoluteUrl)
-                }
-            }
-            results.add(buildInstance.result)
+            ]]))
         },
         'stylish': {
-            node('master') {
-                githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                        status: 'PENDING', description: PENDING_MESSAGE, context: 'stylish', targetUrl: BUILD_URL)
-            }
-            def buildInstance = build(job: "subscription-manager-stylish-tests-pr", parameters: [[
+            results.add(buildWithNotifications(context: 'stylish', job: "subscription-manager-stylish-tests-pr", parameters: [[
                 $class: 'StringParameterValue',
                 name: 'sha1',
                 value: "${sha1}"
-            ]], propagate: false)
-            node('master') {
-                if (buildInstance.result == 'SUCCESS') {
-                    githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                            status: 'SUCCESS', description: SUCCESS_MESSAGE, context: 'stylish', targetUrl: buildInstance.absoluteUrl)
-                }
-                else {
-                    githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                            status: 'FAILURE', description: FAILURE_MESSAGE, context: 'stylish', targetUrl: buildInstance.absoluteUrl)
-                }
-            }
-            results.add(buildInstance.result)
+            ]]))
         },
         'tito': {
-            node('master') {
-                githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                      status: 'PENDING', description: PENDING_MESSAGE, context: 'tito', targetUrl: BUILD_URL)
-            }
-            def buildInstance = build(job: "subscription-manager-tito-tests-pr", parameters: [[
+            results.add(buildWithNotifications(context: 'tito', job: "subscription-manager-tito-tests-pr", parameters: [[
                 $class: 'StringParameterValue',
                 name: 'sha1',
                 value: "${sha1}"
-            ]], propagate: false)
-            node('master') {
-                if (buildInstance.result == 'SUCCESS') {
-                    githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                            status: 'SUCCESS', description: SUCCESS_MESSAGE, context: 'tito', targetUrl: buildInstance.absoluteUrl)
-                }
-                else {
-                    githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                            status: 'FAILURE', description: FAILURE_MESSAGE, context: 'tito', targetUrl: buildInstance.absoluteUrl)
-                }
-            }
-            results.add(buildInstance.result)
+            ]]))
         },
         'python-rhsm-python3': {
-            node('master') {
-                githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                      status: 'PENDING', description: PENDING_MESSAGE, context: 'python-rhsm-python3', targetUrl: BUILD_URL)
-            }
-            def buildInstance = build(job: "python-rhsm-python3-tests-pr-builder", parameters: [[
+            results.add(buildWithNotifications(context: 'python-rhsm-python3', job: "python-rhsm-python3-tests-pr-builder", parameters: [[
                 $class: 'StringParameterValue',
                 name: 'sha1',
                 value: "${sha1}"
-            ]], propagate: false)
-            node('master') {
-                if (buildInstance.result == 'SUCCESS') {
-                    githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                            status: 'SUCCESS', description: SUCCESS_MESSAGE, context: 'python-rhsm-python3', targetUrl: buildInstance.absoluteUrl)
-                }
-                else {
-                    githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                            status: 'FAILURE', description: FAILURE_MESSAGE, context: 'python-rhsm-python3', targetUrl: buildInstance.absoluteUrl)
-                }
-            }
-            results.add(buildInstance.result)
+            ]]))
+        },
+        'opensuse42-build': {
+            results.add(buildWithNotifications(context: 'opensuse42-build', job: "subscription-manager-suse-build-opensuse42", parameters: [[
+                $class: 'StringParameterValue',
+                name: 'sha1',
+                value: "${sha1}"
+            ]]))
+        },
+        'sles12-build': {
+            results.add(buildWithNotifications(context: 'sles12-build', job: "subscription-manager-suse-build-sles12", parameters: [[
+                $class: 'StringParameterValue',
+                name: 'sha1',
+                value: "${sha1}"
+            ]]))
+        },
+        'opensuse42-test': {
+            results.add(buildWithNotifications(context: 'opensuse42-test', job: "subscription-manager-suse-opensuse42-tests", parameters: [[
+                $class: 'StringParameterValue',
+                name: 'sha1',
+                value: "${sha1}"
+            ]]))
+        },
+        'sles12-test': {
+            results.add(buildWithNotifications(context: 'sles12-test', job: "subscription-manager-suse-sles12-tests", parameters: [[
+                $class: 'StringParameterValue',
+                name: 'sha1',
+                value: "${sha1}"
+            ]]))
         },
     )
     node('master') {
         def buildPassed = !results.contains('FAILURE') && !results.contains('ABORTED') && !results.contains('UNSTABLE')
         if (!buildPassed) {
             currentBuild.result = 'FAILURE'
-            githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                    status: 'FAILURE', description: FAILURE_MESSAGE, context: 'jenkins-pipeline', targetUrl: BUILD_URL)
+            githubStatus(status: 'FAILURE', context: 'jenkins-pipeline', targetUrl: BUILD_URL)
 
             sendIrcNotification('#candlepin', "subscription-manager build # ${env.BUILD_NUMBER} failed. See ${env.BUILD_URL} for details.")
         }
         else {
-            githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                    status: 'SUCCESS', description: SUCCESS_MESSAGE, context: 'jenkins-pipeline', targetUrl: BUILD_URL)
+            githubStatus(status: 'SUCCESS', context: 'jenkins-pipeline', targetUrl: BUILD_URL)
         }
     }
 }
