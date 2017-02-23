@@ -21,14 +21,8 @@ sudo yum-builddep subscription-manager.spec  # ensure we install any missing rpm
 virtualenv env --system-site-packages || true
 source env/bin/activate
 
-# build a copy of python-rhsm from master
-mkdir python_rhsm_build
-cd python_rhsm_build
-
-git clone git://github.com/candlepin/python-rhsm.git
-
 # build/test python-rhsm
-pushd $WORKSPACE/python_rhsm_build/python-rhsm
+pushd $WORKSPACE/python-rhsm
 PYTHON_RHSM=$(pwd)
 
 # build the c modules
