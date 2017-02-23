@@ -15,15 +15,20 @@ def rhsmJob = job("$baseFolder/subscription-manager-nose-tests-pr"){
     }
     steps {
         shell readFileFromWorkspace('resources/subscription-manager-nose-tests.sh')
+        shell readFileFromWorkspace('resources/python-rhsm-nose-tests.sh')
     }
     publishers {
         archiveArtifacts {
             pattern('nosetests.xml')
             pattern('coverage.xml')
+            pattern('python-rhsm/nosetests.xml')
         }
         publishHtml {
             report('cover/') {
                 reportName('Coverage module html report')
+            }
+            report('python-rhsm/htmlcov/') {
+                reportName('python-rhsm coverage module html report')
             }
         }
     }
