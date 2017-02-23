@@ -4,7 +4,6 @@ import javaposse.jobdsl.dsl.Job
 
 class rhsmLib {
     static String candlepinRepo = "candlepin"
-    static String pythonRHSMRepo = "python-rhsm"
     static String submanRepo = "subscription-manager"
     static String submanJobFolder = "subscription-manager"
 

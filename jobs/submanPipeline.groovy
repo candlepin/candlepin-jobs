@@ -91,6 +91,28 @@ stage('test') {
             }
             results.add(buildInstance.result)
         },
+        'python-rhsm-python3': {
+            node('master') {
+                githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
+                      status: 'PENDING', description: PENDING_MESSAGE, context: 'python-rhsm-python3', targetUrl: BUILD_URL)
+            }
+            def buildInstance = build(job: "python-rhsm-python3-tests-pr-builder", parameters: [[
+                $class: 'StringParameterValue',
+                name: 'sha1',
+                value: "${sha1}"
+            ]], propagate: false)
+            node('master') {
+                if (buildInstance.result == 'SUCCESS') {
+                    githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
+                            status: 'SUCCESS', description: SUCCESS_MESSAGE, context: 'python-rhsm-python3', targetUrl: buildInstance.absoluteUrl)
+                }
+                else {
+                    githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
+                            status: 'FAILURE', description: FAILURE_MESSAGE, context: 'python-rhsm-python3', targetUrl: buildInstance.absoluteUrl)
+                }
+            }
+            results.add(buildInstance.result)
+        },
     )
     node('master') {
         def buildPassed = !results.contains('FAILURE') && !results.contains('ABORTED') && !results.contains('UNSTABLE')

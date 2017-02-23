@@ -22,6 +22,7 @@ echo "sha" "${sha1}"
 #TMPFILE=`mktemp`|| exit 1; $(make stylish | tee $TMPFILE); if [ -s $TMPFILE ] ; then echo "FAILED"; cat $TMPFILE; exit 1; fi
 
 
+pushd python-rhsm
 PYTHON_RHSM=$(pwd)
 
 # build the c modules
@@ -37,6 +38,6 @@ cp build/lib.linux-*/rhsm/_certificate.so src/rhsm/
 #pushd test/unit
 nosetests --with-xunit --with-cover --cover-package rhsm --cover-erase test/unit/
 
-SRC_DIR=$WORKSPACE/src/rhsm/
+SRC_DIR=$PYTHON_RHSM/src/rhsm/
 coverage html --include "${SRC_DIR}/*"
 coverage xml --include "${SRC_DIR}/*"

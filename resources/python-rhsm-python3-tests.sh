@@ -22,6 +22,7 @@ echo "sha" "${sha1}"
 #TMPFILE=`mktemp`|| exit 1; $(make stylish | tee $TMPFILE); if [ -s $TMPFILE ] ; then echo "FAILED"; cat $TMPFILE; exit 1; fi
 
 
+pushd python-rhsm
 PYTHON_RHSM=$(pwd)
 
 # build the c modules
@@ -35,6 +36,6 @@ python3 setup.py build_ext --inplace
 #pushd test/unit
 nosetests-3 --with-xunit --with-cover --cover-package rhsm --cover-erase test/unit/
 
-SRC_DIR=$WORKSPACE/src/rhsm/
+SRC_DIR=$PYTHON_RHSM/src/rhsm/
 coverage3 html --include "${SRC_DIR}/*"
 coverage3 xml --include "${SRC_DIR}/*"
