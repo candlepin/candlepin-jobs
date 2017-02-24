@@ -43,7 +43,7 @@ dependencies {
     testCompile 'org.jenkins-ci.plugins:config-file-provider:2.9.3@jar'
 
     // plugins to install in test instance
-    testPlugins 'org.jenkins-ci.plugins:ghprb:1.31.4'
+    testPlugins 'org.jenkins-ci.plugins:ghprb:1.33.1'
     testPlugins 'com.coravy.hudson.plugins.github:github:1.19.0'
     testPlugins 'org.jenkins-ci.plugins:config-file-provider:2.9.3'
     testPlugins 'org.jenkins-ci.plugins:ansicolor:0.4.3'

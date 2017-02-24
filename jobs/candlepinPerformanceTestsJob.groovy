@@ -35,6 +35,7 @@ job("Candlepin Performance"){
             admins(['alikins','awood','mstead','wottop','bkearney','Ceiu','vritant','nguyenfilip','cnsnyder','barnabycourt','Lorquas'])
             cron('H/5 * * * *')
             triggerPhrase('test this please')
+            blackListTargetBranches(['0.9.23-hotfix','candlepin-0.9.49-HOTFIX','candlepin-0.9.51-HOTFIX','candlepin-0.9.54-HOTFIX'])
             extensions {
                 commitStatus {
                     context('jenkins-candlepin-performance')
@@ -46,7 +47,7 @@ job("Candlepin Performance"){
         ansiblePlaybook('ansible/candlepin.yml') {
             inventoryPath('${PERF_INVENTORY}')
             credentialsId('fe2c79db-3166-4e61-8996-a8e7de7fbb5c')
-            additionalParameters('--extra-vars=\"candlepin_branch=${candlepin_branch} caracalla_branch=${caracalla_branch} candlepin_throughput_properties=${candlepin_throughput_properties} jmeter_tests=${jmeter_tests}\"')
+            additionalParameters('--extra-vars=\"candlepin_branch=${ghprbActualCommit} caracalla_branch=${caracalla_branch} candlepin_throughput_properties=${candlepin_throughput_properties} jmeter_tests=${jmeter_tests}\"')
             colorizedOutput(true)
         }
     }
