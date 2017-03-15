@@ -5,6 +5,7 @@
     jenkins_plugins:
       - ansible
       - ansicolor
+      - build-timeout
       - config-file-provider
       - credentials-binding
       - email-ext

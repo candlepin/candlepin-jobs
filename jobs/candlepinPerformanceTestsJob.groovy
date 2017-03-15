@@ -1,4 +1,9 @@
-job("Candlepin Performance"){
+import jobLib.rhsmLib
+
+String baseFolder = rhsmLib.candlepinJobFolder
+
+job("$baseFolder/Candlepin Performance") {
+    previousNames('Candlepin Performance')
     description('This job runs candlepin performance tests')
     label('rhsm')
     wrappers {
@@ -31,17 +36,6 @@ job("Candlepin Performance"){
     }
     triggers {
         cron('H 3 * * 6')
-        githubPullRequest {
-            admins(['alikins','awood','mstead','wottop','bkearney','Ceiu','vritant','nguyenfilip','cnsnyder','barnabycourt','Lorquas'])
-            cron('H/5 * * * *')
-            triggerPhrase('test this please')
-            blackListTargetBranches(['0.9.23-hotfix','candlepin-0.9.49-HOTFIX','candlepin-0.9.51-HOTFIX','candlepin-0.9.54-HOTFIX'])
-            extensions {
-                commitStatus {
-                    context('jenkins-candlepin-performance')
-                }
-            }
-        }
     }
     steps {
         ansiblePlaybook('ansible/candlepin.yml') {
