@@ -14,4 +14,4 @@ mkdir -p $WORKSPACE/artifacts/
 chcon -Rt svirt_sandbox_file_t $WORKSPACE//artifacts/
 
 # Run the linter
-docker run -P --rm -t -v $WORKSPACE/artifacts/:/artifacts/ docker-registry.usersys.redhat.com/candlepin/candlepin-postgresql cp-test -l -b jenkins -c "${sha1}"
+./docker/test -p -c 'cp-test -l -b jenkins -c "${sha1}"'

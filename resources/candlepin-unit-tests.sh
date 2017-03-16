@@ -14,4 +14,4 @@ mkdir -p $WORKSPACE/artifacts/
 chcon -Rt svirt_sandbox_file_t $WORKSPACE//artifacts/
 
 # Run the Candlepin unit tests
-docker run -Pt --rm -v $WORKSPACE/artifacts/:/artifacts/ docker-registry.usersys.redhat.com/candlepin/candlepin-postgresql cp-test -uuu -c "${sha1}"
+./docker/test -p -c 'cp-test -uuu -c "${sha1}"'

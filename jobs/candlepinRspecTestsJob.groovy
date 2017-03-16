@@ -4,9 +4,9 @@ String baseFolder = rhsmLib.candlepinJobFolder
 
 String githubOrg = binding.variables['CANDLEPIN_JENKINS_GITHUB_ORG'] ?: 'candlepin'
 
-String[] databases = ['mysql', 'postgresql']
+String[] databases = ['mysql', 'postgresql', 'oracle']
 String[] modes = ['hosted', 'standalone']
-def dbDescriptions = [mysql: 'MySQL/MariaDB', postgresql: 'PostgreSQL']
+def dbDescriptions = [mysql: 'MySQL/MariaDB', postgresql: 'PostgreSQL', 'oracle': 'OracleDB']
 def modeDescriptions = [standalone: '', hosted: ' with Candlepin configured like hosted']
 def cpTestArgs = [standalone: '-r', hosted: '-H']
 

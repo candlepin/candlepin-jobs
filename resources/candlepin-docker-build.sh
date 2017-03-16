@@ -7,4 +7,4 @@ env
 echo "Using workspace: $WORKSPACE"
 docker --version
 
-./docker/rebuild.sh -p
+./docker/build-images -p
