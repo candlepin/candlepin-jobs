@@ -3,9 +3,6 @@
 env | sort
 echo
 
-docker pull docker-registry.usersys.redhat.com/candlepin/candlepin-postgresql || true
-echo "Docker pull completed"
-
 # The docker container test script will know to copy out
 echo "Using workspace: $WORKSPACE"
 mkdir -p $WORKSPACE/artifacts/
