@@ -146,7 +146,7 @@ stage('test') {
                 githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
                       status: 'PENDING', description: PENDING_MESSAGE, context: 'jenkins-rspec-hosted-postgres', targetUrl: BUILD_URL)
             }
-            def buildInstance = build(job: "candlepin-pullrequest-spectests-hosted-postgres", parameters: [[
+            def buildInstance = build(job: "candlepin-pullrequest-spectests-hosted-postgresql", parameters: [[
                 $class: 'StringParameterValue',
                 name: 'sha1',
                 value: "${sha1}"
