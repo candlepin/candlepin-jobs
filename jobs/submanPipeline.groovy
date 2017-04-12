@@ -121,12 +121,6 @@ stage('test') {
             githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
                     status: 'FAILURE', description: FAILURE_MESSAGE, context: 'jenkins-pipeline', targetUrl: BUILD_URL)
 
-            String subject = "subscription-manager - build # ${env.BUILD_NUMBER} - Failure"
-            emailext(
-                subject: subject,
-                body: "${subject}:\n\nCheck console output at ${env.BUILD_URL} to view the results",
-                to: 'chainsaw@redhat.com',
-            )
             sendIrcNotification('#candlepin', "subscription-manager build # ${env.BUILD_NUMBER} failed. See ${env.BUILD_URL} for details.")
         }
         else {

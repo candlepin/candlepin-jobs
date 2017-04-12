@@ -6,7 +6,7 @@ String githubOrg = binding.variables['CANDLEPIN_JENKINS_GITHUB_ORG'] ?: 'candlep
 pipeline_helper = job("$baseFolder/candlepin pipeline helper") {
     environmentVariables {
         groovy('''
-            return [emailDestination: binding.variables.get('ghprbPullAuthorEmail') ?: binding.variables.get('GIT_AUTHOR_EMAIL') ?: 'chainsaw@redhat.com']
+            return [emailDestination: binding.variables.get('ghprbPullAuthorEmail') ?: binding.variables.get('GIT_AUTHOR_EMAIL')]
         ''')
     }
     logRotator {
@@ -32,7 +32,7 @@ pipeline = pipelineJob("$baseFolder/candlepin") {
         stringParam('sha1', 'master', 'GIT commit hash of what you want to test.')
         stringParam('ghprbActualCommit', null, 'commit used to report status against a GitHub PR')
         stringParam('ghprbTargetBranch', null, 'PR target branch')
-        stringParam('emailDestination', 'chainsaw@redhat.com', 'email address to report failures to')
+        stringParam('emailDestination', null, 'email address to report failures to')
     }
     logRotator {
         numToKeep(20)

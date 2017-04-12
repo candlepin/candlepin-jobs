@@ -23,7 +23,6 @@ job("$baseFolder/candlepin-docker-images") {
         shell readFileFromWorkspace('resources/candlepin-docker-build.sh')
     }
     publishers {
-        mailer('chainsaw@redhat.com')
         irc {
             channel('#candlepin')
         }

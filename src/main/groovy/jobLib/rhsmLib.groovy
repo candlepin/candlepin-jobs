@@ -52,9 +52,6 @@ class rhsmLib {
     static addCandlepinNotifier = { Job job  ->
         job.with {
             publishers {
-                extendedEmail {
-                    recipientList('chainsaw@redhat.com')
-                }
                 irc{
                     channel('#candlepin')
                     strategy('FAILURE_AND_FIXED')
