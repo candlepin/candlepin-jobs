@@ -1,21 +1,27 @@
 import hudson.plugins.ircbot.v2.IRCConnectionProvider
+import jenkins.model.Jenkins
 
-String REPO = 'https://github.com/candlepin/candlepin'
-String GITHUB_CREDENTIALS_ID = 'github-api-token-as-username-password'
-String GITHUB_ACCOUNT = 'candlepin'
-String GITHUB_REPO = 'candlepin'
-String GITHUB_COMMIT = ghprbActualCommit ?: sha1
-String PENDING_MESSAGE = 'Build has been scheduled.'
-String SUCCESS_MESSAGE = 'Test(s) passed.'
-String FAILURE_MESSAGE = 'Test(s) failed.'
-String[] PERFORMANCE_BRANCH_BLACKLIST = [
+REPO = 'https://github.com/candlepin/candlepin'
+GITHUB_CREDENTIALS_ID = 'github-api-token-as-username-password'
+GITHUB_ACCOUNT = 'candlepin'
+GITHUB_REPO = 'candlepin'
+GITHUB_COMMIT = ghprbActualCommit ?: sha1
+PENDING_MESSAGE = 'Build has been scheduled.'
+SUCCESS_MESSAGE = 'Test(s) passed.'
+FAILURE_MESSAGE = 'Test(s) failed.'
+PERFORMANCE_BRANCH_BLACKLIST = [
     '0.9.23-hotfix',
     'candlepin-0.9.49-HOTFIX',
     'candlepin-0.9.51-HOTFIX',
     'candlepin-0.9.54-HOTFIX',
 ]
+STATUS_MESSAGE_MAP = [
+    'PENDING': PENDING_MESSAGE,
+    'SUCCESS': SUCCESS_MESSAGE,
+    'FAILURE': FAILURE_MESSAGE,
+]
 
-def sendIrcNotification = { channel, text ->
+def sendIrcNotification(channel, text) {
     try {
         IRCConnectionProvider.getInstance().currentConnection().send(channel, text)
     } catch(e) {
@@ -23,197 +29,101 @@ def sendIrcNotification = { channel, text ->
     }
 }
 
+def githubStatus(Map args) {
+    description = args.get('description') ?: STATUS_MESSAGE_MAP[args.status]
+    githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
+            status: args.status, description: description, context: args.context, targetUrl: args.targetUrl)
+}
+
+def buildWithNotifications(Map args) {
+    boolean enabled = Jenkins.instance.getItem(args.job, currentBuild.rawBuild.parent, Item.class).buildable
+    if (!enabled) {
+        echo "Skipping ${args.job} as it is disabled."
+        return 'SUCCESS'
+    }
+    githubStatus(status: 'PENDING', context: args.context, targetUrl: BUILD_URL)
+    def buildInstance = build(job: args.job, parameters: args.parameters, propagate: false)
+    node('master') {
+        if (buildInstance.result == 'SUCCESS') {
+            githubStatus(status: 'SUCCESS', context: args.context, targetUrl: buildInstance.absoluteUrl)
+        }
+        else {
+            githubStatus(status: 'FAILURE', context: args.context, targetUrl: buildInstance.absoluteUrl)
+        }
+    }
+    return buildInstance.result
+}
+
 stage('test') {
     node('master') {
-        githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                status: 'PENDING', description: PENDING_MESSAGE, context: 'jenkins-pipeline', targetUrl: BUILD_URL)
+        githubStatus(status: 'PENDING', context: 'jenkins-pipeline', targetUrl: BUILD_URL)
     }
     def results = []
     parallel(
         'unit-tests': {
-            node('master') {
-                githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                        status: 'PENDING', description: PENDING_MESSAGE, context: 'jenkins-candlepin-unittests', targetUrl: BUILD_URL)
-            }
-            def buildInstance = build(job: "candlepin-pullrequest-unittests", parameters: [[
+            results.add(buildWithNotifications(context: 'jenkins-candlepin-unittests', job: "candlepin-pullrequest-unittests", parameters: [[
                 $class: 'StringParameterValue',
                 name: 'sha1',
                 value: "${sha1}"
-            ]], propagate: false)
-            node('master') {
-                if (buildInstance.result == 'SUCCESS') {
-                    githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                            status: 'SUCCESS', description: SUCCESS_MESSAGE, context: 'jenkins-candlepin-unittests', targetUrl: buildInstance.absoluteUrl)
-                }
-                else {
-                    githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                            status: 'FAILURE', description: FAILURE_MESSAGE, context: 'jenkins-candlepin-unittests', targetUrl: buildInstance.absoluteUrl)
-                }
-            }
-            results.add(buildInstance.result)
+            ]]))
         },
         'lint': {
-            node('master') {
-                githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                        status: 'PENDING', description: PENDING_MESSAGE, context: 'jenkins-checkstyle', targetUrl: BUILD_URL)
-            }
-            def buildInstance = build(job: "candlepin-pullrequest-lint", parameters: [[
+            results.add(buildWithNotifications(context: 'jenkins-checkstyle', job: "candlepin-pullrequest-lint", parameters: [[
                 $class: 'StringParameterValue',
                 name: 'sha1',
                 value: "${sha1}"
-            ]], propagate: false)
-            node('master') {
-                if (buildInstance.result == 'SUCCESS') {
-                    githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                            status: 'SUCCESS', description: SUCCESS_MESSAGE, context: 'jenkins-checkstyle', targetUrl: buildInstance.absoluteUrl)
-                }
-                else {
-                    githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                            status: 'FAILURE', description: FAILURE_MESSAGE, context: 'jenkins-checkstyle', targetUrl: buildInstance.absoluteUrl)
-                }
-            }
-            results.add(buildInstance.result)
+            ]]))
         },
         'performance': {
             if (!PERFORMANCE_BRANCH_BLACKLIST.contains(ghprbTargetBranch)) {
-                node('master') {
-                    githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                            status: 'PENDING', description: PENDING_MESSAGE, context: 'jenkins-candlepin-performance', targetUrl: BUILD_URL)
-                }
-                def buildInstance = build(job: "Candlepin Performance", parameters: [[
+                results.add(buildWithNotifications(context: 'jenkins-candlepin-performance', job: "Candlepin Performance", parameters: [[
                      $class: 'StringParameterValue',
                      name  : 'ghprbActualCommit',
                      value : "${sha1}"
-                ]], propagate: false)
-                node('master') {
-                    if (buildInstance.result == 'SUCCESS') {
-                        githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                                status: 'SUCCESS', description: SUCCESS_MESSAGE, context: 'jenkins-candlepin-performance', targetUrl: buildInstance.absoluteUrl)
-                    } else {
-                        githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                                status: 'FAILURE', description: FAILURE_MESSAGE, context: 'jenkins-candlepin-performance', targetUrl: buildInstance.absoluteUrl)
-                    }
-                }
-                results.add(buildInstance.result)
+                ]]))
             }
         },
         'rspec-postgres': {
-            node('master') {
-                githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                      status: 'PENDING', description: PENDING_MESSAGE, context: 'jenkins-rspec-postgresql', targetUrl: BUILD_URL)
-            }
-            def buildInstance = build(job: "candlepin-pullrequest-spectests-postgresql", parameters: [[
+            results.add(buildWithNotifications(context: 'jenkins-rspec-postgresql', job: "candlepin-pullrequest-spectests-postgresql", parameters: [[
                 $class: 'StringParameterValue',
                 name: 'sha1',
                 value: "${sha1}"
-            ]], propagate: false)
-            node('master') {
-                if (buildInstance.result == 'SUCCESS') {
-                    githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                            status: 'SUCCESS', description: SUCCESS_MESSAGE, context: 'jenkins-rspec-postgresql', targetUrl: buildInstance.absoluteUrl)
-                }
-                else {
-                    githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                            status: 'FAILURE', description: FAILURE_MESSAGE, context: 'jenkins-rspec-postgresql', targetUrl: buildInstance.absoluteUrl)
-                }
-            }
-            results.add(buildInstance.result)
+            ]]))
         },
         'rspec-mysql': {
-            node('master') {
-                githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                      status: 'PENDING', description: PENDING_MESSAGE, context: 'jenkins-rspec-mysql', targetUrl: BUILD_URL)
-            }
-            def buildInstance = build(job: "candlepin-pullrequest-spectests-mysql", parameters: [[
+            results.add(buildWithNotifications(context: 'jenkins-rspec-mysql', job: "candlepin-pullrequest-spectests-mysql", parameters: [[
                 $class: 'StringParameterValue',
                 name: 'sha1',
                 value: "${sha1}"
-            ]], propagate: false)
-            node('master') {
-                if (buildInstance.result == 'SUCCESS') {
-                    githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                            status: 'SUCCESS', description: SUCCESS_MESSAGE, context: 'jenkins-rspec-mysql', targetUrl: buildInstance.absoluteUrl)
-                }
-                else {
-                    githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                            status: 'FAILURE', description: FAILURE_MESSAGE, context: 'jenkins-rspec-mysql', targetUrl: buildInstance.absoluteUrl)
-                }
-            }
-            results.add(buildInstance.result)
+            ]]))
         },
         'rspec-hosted-postgres': {
-            node('master') {
-                githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                      status: 'PENDING', description: PENDING_MESSAGE, context: 'jenkins-rspec-hosted-postgres', targetUrl: BUILD_URL)
-            }
-            def buildInstance = build(job: "candlepin-pullrequest-spectests-hosted-postgresql", parameters: [[
+            results.add(buildWithNotifications(context: 'jenkins-rspec-hosted-postgres', job: "candlepin-pullrequest-spectests-hosted-postgresql", parameters: [[
                 $class: 'StringParameterValue',
                 name: 'sha1',
                 value: "${sha1}"
-            ]], propagate: false)
-            node('master') {
-                if (buildInstance.result == 'SUCCESS') {
-                    githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                            status: 'SUCCESS', description: SUCCESS_MESSAGE, context: 'jenkins-rspec-hosted-postgres', targetUrl: buildInstance.absoluteUrl)
-                }
-                else {
-                    githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                            status: 'FAILURE', description: FAILURE_MESSAGE, context: 'jenkins-rspec-hosted-postgres', targetUrl: buildInstance.absoluteUrl)
-                }
-            }
-            results.add(buildInstance.result)
+            ]]))
         },
         'jenkins-rspec-hosted-mysql': {
-            node('master') {
-                githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                      status: 'PENDING', description: PENDING_MESSAGE, context: 'jenkins-rspec-hosted-mysql', targetUrl: BUILD_URL)
-            }
-            def buildInstance = build(job: "candlepin-pullrequest-spectests-hosted-mysql", parameters: [[
+            results.add(buildWithNotifications(context: 'jenkins-rspec-hosted-mysql', job: "candlepin-pullrequest-spectests-hosted-mysql", parameters: [[
                 $class: 'StringParameterValue',
                 name: 'sha1',
                 value: "${sha1}"
-            ]], propagate: false)
-            node('master') {
-                if (buildInstance.result == 'SUCCESS') {
-                    githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                            status: 'SUCCESS', description: SUCCESS_MESSAGE, context: 'jenkins-rspec-hosted-mysql', targetUrl: buildInstance.absoluteUrl)
-                }
-                else {
-                    githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                            status: 'FAILURE', description: FAILURE_MESSAGE, context: 'jenkins-rspec-hosted-mysql', targetUrl: buildInstance.absoluteUrl)
-                }
-            }
-            results.add(buildInstance.result)
+            ]]))
         },
         'jenkins-rspec-qpid': {
-            node('master') {
-                githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                      status: 'PENDING', description: PENDING_MESSAGE, context: 'jenkins-rspec-qpid', targetUrl: BUILD_URL)
-            }
-            def buildInstance = build(job: "candlepin-pullrequest-spectests-qpid", parameters: [[
+            results.add(buildWithNotifications(context: 'jenkins-rspec-qpid', job: "candlepin-pullrequest-spectests-qpid", parameters: [[
                 $class: 'StringParameterValue',
                 name: 'sha1',
                 value: "${sha1}"
-            ]], propagate: false)
-            node('master') {
-                if (buildInstance.result == 'SUCCESS') {
-                    githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                            status: 'SUCCESS', description: SUCCESS_MESSAGE, context: 'jenkins-rspec-qpid', targetUrl: buildInstance.absoluteUrl)
-                }
-                else {
-                    githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                            status: 'FAILURE', description: FAILURE_MESSAGE, context: 'jenkins-rspec-qpid', targetUrl: buildInstance.absoluteUrl)
-                }
-            }
-            results.add(buildInstance.result)
+            ]]))
         },
     )
     node('master') {
         def buildPassed = !results.contains('FAILURE') && !results.contains('ABORTED') && !results.contains('UNSTABLE')
         if (!buildPassed) {
             currentBuild.result = 'FAILURE'
-            githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                    status: 'FAILURE', description: FAILURE_MESSAGE, context: 'jenkins-pipeline', targetUrl: BUILD_URL)
+            githubStatus(status: 'FAILURE', context: 'jenkins-pipeline', targetUrl: BUILD_URL)
 
             String subject = "candlepin - build # ${env.BUILD_NUMBER} - Failure"
             emailext(
@@ -224,8 +134,7 @@ stage('test') {
             sendIrcNotification('#candlepin', "candlepin build # ${env.BUILD_NUMBER} failed. See ${env.BUILD_URL} for details.")
         }
         else {
-            githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                    status: 'SUCCESS', description: SUCCESS_MESSAGE, context: 'jenkins-pipeline', targetUrl: BUILD_URL)
+            githubStatus(status: 'SUCCESS', context: 'jenkins-pipeline', targetUrl: BUILD_URL)
         }
     }
 }
