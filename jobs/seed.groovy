@@ -19,6 +19,10 @@ job('Candlepin Seed Job') {
             external 'jobs/**/*Job.groovy'
             additionalClasspath 'src/main/groovy'
         }
+        dsl {
+            external 'jobs/views.groovy'
+            additionalClasspath 'src/main/groovy'
+        }
     }
     publishers {
         publishHtml {

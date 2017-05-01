@@ -4,5 +4,5 @@
   name: geerlingguy.jenkins
 
 - src: https://github.com/geerlingguy/ansible-role-java
-  version: 1.7.0
+  version: 1.7.4
   name: geerlingguy.java
