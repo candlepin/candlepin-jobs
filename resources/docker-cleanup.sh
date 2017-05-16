@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/bash -x
 
 function jssh(){
   ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no jenkins@${1} ${2}
