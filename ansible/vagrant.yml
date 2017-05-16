@@ -2,6 +2,8 @@
 - hosts: all
   become: true
   vars:
+    java_packages:
+      - java-1.8.0-openjdk
     jenkins_plugins:
       - ansible
       - ansicolor
@@ -19,7 +21,9 @@
       - job-dsl
       - parameterized-trigger
       - pipeline-githubnotify-step
-      - uno-choice
+      - progress-bar-column-plugin
+      - ssh-slaves
+      #- uno-choice  ## now vendored from jenkins-plugins
       - workflow-aggregator
       - ws-cleanup
     CANDLEPIN_JENKINS_GITHUB_ORG: candlepin
@@ -27,6 +31,27 @@
     - geerlingguy.jenkins
 
   tasks:
+    - name: copy vendored plugins
+      synchronize:
+        src: "jenkins-plugins/"
+        dest: "/var/lib/jenkins/plugins/"
+
+    - name: set perms on vendored plugins
+      file:
+        dest: /var/lib/jenkins/plugins
+        owner: jenkins
+        group: jenkins
+        mode: 0755
+        recurse: yes
+
+    - name: copy init.groovy
+      copy:
+        src: init.groovy
+        dest: /var/lib/jenkins/
+        owner: jenkins
+        group: jenkins
+        mode: 0755
+
     - name: disable mail relay
       lineinfile: dest=/etc/postfix/main.cf line="default_transport = local:$myhostname"
       notify: reload postfix config

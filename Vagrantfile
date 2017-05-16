@@ -3,6 +3,10 @@
 
 Vagrant.configure(2) do |config|
   config.vm.box = "centos/7"
+  config.vm.synced_folder ".", "/vagrant",
+    type: "rsync",
+    owner: "jenkins",
+    group: "jenkins"
 
   if Vagrant.has_plugin?("vagrant-hostmanager")
     config.hostmanager.enabled = true
@@ -28,4 +32,6 @@ Vagrant.configure(2) do |config|
       end
     end
   end
+
+  config.vm.provision "shell", inline: 'chown -R jenkins:jenkins /vagrant'
 end
