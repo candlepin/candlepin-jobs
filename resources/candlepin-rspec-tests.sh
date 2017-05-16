@@ -18,4 +18,4 @@ case $CANDLEPIN_DATABASE in
   oracle) TEST_DB="-o";;
 esac
 
-./docker/test $TEST_DB -c "cp-test ${CP_TEST_ARGS} -c ${sha1}" -n "rspec-tests-${sha1}"
+./docker/test $TEST_DB -c "cp-test ${CP_TEST_ARGS} -c ${sha1}" -n "rspec-${BUILD_TAG}"
