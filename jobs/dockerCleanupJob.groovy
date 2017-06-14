@@ -9,7 +9,7 @@ String listOfSlaves(int start, int end) {
   return slaveList
 }
 
-job("Docker Cleanup"){
+job("DockerCleanup"){
     description('This job deletes unused docker images across all the slave nodes.')
     label('rhsm')
     parameters {
