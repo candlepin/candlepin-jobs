@@ -3,7 +3,7 @@ import jobLib.rhsmLib
 String baseFolder = rhsmLib.candlepinJobFolder
 String githubOrg = binding.variables['CANDLEPIN_JENKINS_GITHUB_ORG'] ?: 'candlepin'
 
-pipeline_helper = job("$baseFolder/candlepin pipeline helper") {
+pipeline_helper = job("$baseFolder/candlepin-pipeline-helper") {
     environmentVariables {
         groovy('''
             return [emailDestination: binding.variables.get('ghprbPullAuthorEmail') ?: binding.variables.get('GIT_AUTHOR_EMAIL')]

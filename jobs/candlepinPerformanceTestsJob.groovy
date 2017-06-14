@@ -2,8 +2,7 @@ import jobLib.rhsmLib
 
 String baseFolder = rhsmLib.candlepinJobFolder
 
-job("$baseFolder/Candlepin Performance") {
-    previousNames('Candlepin Performance')
+job("$baseFolder/CandlepinPerformance") {
     description('This job runs candlepin performance tests')
     label('rhsm')
     wrappers {

@@ -1,7 +1,7 @@
 import jobLib.rhsmLib
 String baseFolder = rhsmLib.submanJobFolder
 
-pipeline_helper = job("$baseFolder/subscription-manager pipeline helper") {
+pipeline_helper = job("$baseFolder/subscription-manager-pipeline-helper") {
     logRotator {
         numToKeep(1)
     }
