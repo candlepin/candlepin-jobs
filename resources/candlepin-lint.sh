@@ -3,9 +3,6 @@
 env | sort
 echo
 
-docker pull docker-registry.usersys.redhat.com/candlepin/candlepin-postgresql || true
-echo "Docker pull completed"
-
 # The docker container test script will know to copy out
 echo "Using workspace: $WORKSPACE"
 mkdir -p $WORKSPACE/artifacts/
@@ -14,4 +11,4 @@ mkdir -p $WORKSPACE/artifacts/
 chcon -Rt svirt_sandbox_file_t $WORKSPACE//artifacts/
 
 # Run the linter
-docker run -P --rm -t -v $WORKSPACE/artifacts/:/artifacts/ docker-registry.usersys.redhat.com/candlepin/candlepin-postgresql cp-test -l -b jenkins -c "${sha1}"
+./docker/test -p -c 'cp-test -l -b jenkins -c "${sha1}"' -n "lint-${BUILD_TAG}"
