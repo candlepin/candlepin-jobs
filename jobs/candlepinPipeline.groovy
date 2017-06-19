@@ -15,6 +15,7 @@ PERFORMANCE_BRANCH_BLACKLIST = [
     'candlepin-0.9.51-HOTFIX',
     'candlepin-0.9.54-HOTFIX',
 ]
+QPID_BRANCH_BLACKLIST = PERFORMANCE_BRANCH_BLACKLIST // they're the same at the moment
 STATUS_MESSAGE_MAP = [
     'PENDING': PENDING_MESSAGE,
     'SUCCESS': SUCCESS_MESSAGE,
@@ -112,11 +113,13 @@ stage('test') {
             ]]))
         },
         'jenkins-rspec-qpid': {
-            results.add(buildWithNotifications(context: 'jenkins-rspec-qpid', job: "candlepin-pullrequest-spectests-qpid", parameters: [[
-                $class: 'StringParameterValue',
-                name: 'sha1',
-                value: "${sha1}"
-            ]]))
+            if (!QPID_BRANCH_BLACKLIST.contains(ghprbTargetBranch)) {
+                results.add(buildWithNotifications(context: 'jenkins-rspec-qpid', job: "candlepin-pullrequest-spectests-qpid", parameters: [[
+                    $class: 'StringParameterValue',
+                    name: 'sha1',
+                    value: "${sha1}"
+                ]]))
+            }
         },
     )
     node('master') {
