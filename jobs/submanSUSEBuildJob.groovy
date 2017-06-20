@@ -28,7 +28,12 @@ DISTROS.each { name, repo_name ->
             numToKeep(20)
         }
         steps {
-            shell "scripts/suse_build.sh \"\${obs_project_name}\" \"${repo_name}\" -k \$(pwd)"
+            shell "scripts/suse_build.sh \"\${obs_project_name}\" \"${repo_name}\" -k \$WORKSPACE"
+            shell """
+cd python-rhsm
+../scripts/suse_build.sh \"\${obs_project_name}\" \"${repo_name}\" -k \$WORKSPACE
+cd ..
+"""
             shell '''
 # adapted from QE-RPMs jobs (thanks jsefler)
 BUILD_ARCHS=x86_64
