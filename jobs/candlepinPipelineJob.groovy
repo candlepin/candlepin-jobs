@@ -16,7 +16,7 @@ pipeline_helper = job("$baseFolder/candlepin-pipeline-helper") {
         downstreamParameterized {
             trigger('candlepin') {
                 parameters {
-                    predefinedProp('sha1', '${GIT_COMMIT}')
+                    predefinedProp('sha1', '${sha1}')
                     predefinedProp('ghprbActualCommit', '${ghprbActualCommit}')
                     predefinedProp('emailDestination', '${emailDestination}')
                     predefinedProp('ghprbTargetBranch', '${ghprbTargetBranch}')
