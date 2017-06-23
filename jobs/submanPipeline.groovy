@@ -100,6 +100,13 @@ stage('test') {
                 value: "${sha1}"
             ]]))
         },
+        'sles11-build': {
+            results.add(buildWithNotifications(context: 'sles11-build', job: "subscription-manager-suse-build-sles11", parameters: [[
+                $class: 'StringParameterValue',
+                name: 'sha1',
+                value: "${sha1}"
+            ]]))
+        },
         'sles12-build': {
             results.add(buildWithNotifications(context: 'sles12-build', job: "subscription-manager-suse-build-sles12", parameters: [[
                 $class: 'StringParameterValue',
