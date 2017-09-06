@@ -21,7 +21,7 @@ job("$baseFolder/CandlepinPerformance") {
         stringParam('caracalla_branch', 'master', 'name of the caracalla branch to use for the test')
         stringParam('candlepin_throughput_properties', '[\'DURATION_SECONDS=3600\',\'SAMPLES_PER_MINUTE=6900\']', 'override test duration, sample size(small=180, medium = 900, large=6900), and other properties.')
         choiceParam('jmeter_tests', ['candlepin-throughput','loop-over-apis','ImportExport'], 'what test to run')
-        choiceParam('target_branch', ['master', 'candlepin-2.0-HOTFIX'], 'what is target branch of PR (influences snapshot of database VM use for testing)')
+        choiceParam('target_branch', ['master', 'candlepin-2.0-HOTFIX','candlepin-2.1-HOTFIX'], 'what is target branch of PR (influences snapshot of database VM use for testing)')
         booleanParam('keep_logs', false, 'Check this to keep candlepin.log and access.log')
     }
     scm {
