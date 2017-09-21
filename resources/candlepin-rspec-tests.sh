@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/bash -x
 
 env | sort
 echo
@@ -19,4 +19,6 @@ case $CANDLEPIN_DATABASE in
 esac
 
 ./docker/test $TEST_DB -c "cp-test ${CP_TEST_ARGS} -c ${sha1}" -n "rspec-${BUILD_TAG}"
+RETVAL=$?
 sudo chown -R jenkins:jenkins $WORKSPACE/artifacts
+exit $RETVAL
