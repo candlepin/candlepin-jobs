@@ -12,3 +12,4 @@ chcon -Rt svirt_sandbox_file_t $WORKSPACE//artifacts/
 
 # Run the Candlepin unit tests
 ./docker/test -p -c 'cp-test -uuu -c "${sha1}"' -n "unit-tests-${BUILD_TAG}"
+sudo chown -R jenkins:jenkins $WORKSPACE/artifacts

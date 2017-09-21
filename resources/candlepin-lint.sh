@@ -12,3 +12,4 @@ chcon -Rt svirt_sandbox_file_t $WORKSPACE//artifacts/
 
 # Run the linter
 ./docker/test -p -c 'cp-test -l -b jenkins -c "${sha1}"' -n "lint-${BUILD_TAG}"
+sudo chown -R jenkins:jenkins $WORKSPACE/artifacts
