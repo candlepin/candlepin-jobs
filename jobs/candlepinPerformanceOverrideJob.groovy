@@ -6,7 +6,7 @@ job("$baseFolder/CandlepinPerformanceOverride") {
     description('By running this job, the user marks a PR as PASS for performance. Use responsibly')
     label('rhsm')
     parameters {
-        stringParam('sha1', 'sha1 of commit to PASS performance for')
+        stringParam('sha1', null, 'sha1 of commit to PASS performance for')
     }
     wrappers {
         environmentVariables {
