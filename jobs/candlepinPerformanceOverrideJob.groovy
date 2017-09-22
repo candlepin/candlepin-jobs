@@ -28,7 +28,7 @@ job("$baseFolder/CandlepinPerformanceOverride") {
             orgWhitelist('candlepin')
             extensions {
                 commitStatus {
-                    context(name)
+                    context('jenkins-candlepin-performance')
                     triggeredStatus('--none--')
                     startedStatus('--none--')
                     completedStatus('SUCCESS', 'Marked as PASS via GitHub comment.')
