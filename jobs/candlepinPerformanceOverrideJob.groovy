@@ -3,37 +3,41 @@ import jobLib.rhsmLib
 String baseFolder = rhsmLib.candlepinJobFolder
 
 job("$baseFolder/CandlepinPerformanceOverride") {
-    description('By running this job, the user marks a PR as PASS for performance. Use responsibly')
-    label('rhsm')
+    description('Job that watches for performance OK by candlepin org members and marks a PR as PASS for performance. Use responsibly')
     parameters {
         stringParam('sha1', null, 'sha1 of commit to PASS performance for')
     }
-    wrappers {
-        environmentVariables {
-            groovy('[BUILD_USER: currentBuild.getCause(hudson.model.Cause.UserIdCause.class).userId]')
+    label('rhsm')
+    scm {
+        git {
+            remote {
+                github('candlepin/candlepin')
+                refspec('+refs/pull/*:refs/remotes/origin/pr/*')
+            }
+            branch('${sha1}')
         }
     }
-    configure { project ->
-        project / publishers << 'org.jenkinsci.plugins.github.status.GitHubCommitStatusSetter' {
-            commitShaSource(class:'org.jenkinsci.plugins.github.status.sources.ManuallyEnteredShaSource') {
-                sha('${sha1}')
-            }
-            reposSource(class:'org.jenkinsci.plugins.github.status.sources.ManuallyEnteredRepositorySource') {
-                url('https://github.com/candlepin/candlepin')
-            }
-            contextSource(class:'org.jenkinsci.plugins.github.status.sources.ManuallyEnteredCommitContextSource') {
-                context('jenkins-candlepin-performance')
-            }
-            statusResultSource(class:'org.jenkinsci.plugins.github.status.sources.ConditionalStatusResultSource') {
-                results {
-                    'org.jenkinsci.plugins.github.status.sources.misc.AnyBuildResult' {
-                        state('SUCCESS')
-                        message('Marked as PASS by ${BUILD_USER}')
+    triggers {
+        githubPullRequest {
+            triggerPhrase('performance ok')
+            onlyTriggerPhrase(true)
+            useGitHubHooks(false)
+            permitAll(false)
+            allowMembersOfWhitelistedOrgsAsAdmin(true)
+            cron('H/5 * * * *')
+            orgWhitelist('candlepin')
+            extensions {
+                commitStatus {
+                    context(name)
+                    if (!notify) {
+                        triggeredStatus('--none--')
+                        startedStatus('--none--')
+                        completedStatus('SUCCESS', 'Marked as PASS via GitHub comment.')
+                        completedStatus('FAILURE', '--none--')
+                        completedStatus('ERROR', '--none--')
                     }
                 }
             }
-            statusBackrefSource(class: 'org.jenkinsci.plugins.github.status.sources.BuildRefBackrefSource')
-            errorHandlers()
         }
     }
 }
