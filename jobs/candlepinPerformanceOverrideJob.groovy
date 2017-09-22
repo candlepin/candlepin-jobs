@@ -29,13 +29,11 @@ job("$baseFolder/CandlepinPerformanceOverride") {
             extensions {
                 commitStatus {
                     context(name)
-                    if (!notify) {
-                        triggeredStatus('--none--')
-                        startedStatus('--none--')
-                        completedStatus('SUCCESS', 'Marked as PASS via GitHub comment.')
-                        completedStatus('FAILURE', '--none--')
-                        completedStatus('ERROR', '--none--')
-                    }
+                    triggeredStatus('--none--')
+                    startedStatus('--none--')
+                    completedStatus('SUCCESS', 'Marked as PASS via GitHub comment.')
+                    completedStatus('FAILURE', '--none--')
+                    completedStatus('ERROR', '--none--')
                 }
             }
         }
