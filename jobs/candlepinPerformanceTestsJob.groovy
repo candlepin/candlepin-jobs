@@ -12,7 +12,7 @@ job("$baseFolder/CandlepinPerformance") {
                 variable('PERF_INVENTORY')
             }
         }
-        colorizeOutput(String colorMap = 'xterm')
+        colorizeOutput()
     }
     properties {
         githubProjectUrl('https://github.com/candlepin/candlepin/')
