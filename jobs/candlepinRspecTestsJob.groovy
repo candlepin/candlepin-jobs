@@ -26,6 +26,7 @@ databases.each { db ->
                 }
                 preBuildCleanup()
                 colorizeOutput()
+                timestamps()
             }
             logRotator{
                 daysToKeep(90)

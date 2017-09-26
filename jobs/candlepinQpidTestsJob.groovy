@@ -16,6 +16,7 @@ def rhsmJob = job("$baseFolder/candlepin-pullrequest-spectests-qpid") {
         }
         preBuildCleanup()
         colorizeOutput()
+        timestamps()
     }
     logRotator{
         daysToKeep(90)
