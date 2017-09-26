@@ -144,7 +144,13 @@ stage('test') {
                 body: "${subject}:\n\nCheck console output at ${env.BUILD_URL} to view the results",
                 to: emailDestination,
             )
-            sendIrcNotification('#candlepin', "candlepin build # ${env.BUILD_NUMBER} failed. See ${env.BUILD_URL} for details.")
+            try {
+              branch = "${env.GIT_BRANCH}"
+              pr = branch.split('/')[2]
+              sendIrcNotification('#candlepin', "tests failed for pull request: ${pr}. See https://github.com/candlepin/candlepin/pull/${pr} for details.")
+            } catch(e) {
+              sendIrcNotification('#candlepin', "candlepin build # ${env.BUILD_NUMBER} failed. See ${env.BUILD_URL} for details.")
+            }
         }
         else {
             githubStatus(status: 'SUCCESS', context: 'jenkins-pipeline', targetUrl: BUILD_URL)
