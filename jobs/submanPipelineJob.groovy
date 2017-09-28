@@ -11,6 +11,7 @@ pipeline_helper = job("$baseFolder/subscription-manager-pipeline-helper") {
                 parameters {
                     predefinedProp('sha1', '${sha1}')
                     predefinedProp('ghprbActualCommit', '${ghprbActualCommit}')
+                    predefinedProp('ghprbPullId', '${ghprbPullId}')
                 }
             }
         }
@@ -22,6 +23,7 @@ pipeline = pipelineJob("$baseFolder/subscription-manager") {
     parameters {
         stringParam('sha1', 'master', 'GIT commit hash of what you want to test.')
         stringParam('ghprbActualCommit', null, 'commit used to report status against a GitHub PR')
+        stringParam('ghprbPullId', null, 'PR number (used in certain checks)')
     }
     logRotator {
         numToKeep(20)

@@ -151,11 +151,11 @@ stage('test') {
                 body: "${subject}:\n\nCheck console output at ${env.BUILD_URL} to view the results",
                 to: emailDestination,
             )
-            try {
-              branch = "${env.GIT_BRANCH}"
-              pr = branch.split('/')[2]
+            if (ghprbPullId) {
+              pr = ghprbPullId
               sendIrcNotification('#candlepin', "tests failed for pull request: ${pr}. See https://github.com/candlepin/candlepin/pull/${pr} for details.")
-            } catch(e) {
+            }
+            else {
               sendIrcNotification('#candlepin', "candlepin build # ${env.BUILD_NUMBER} failed. See ${env.BUILD_URL} for details.")
             }
         }

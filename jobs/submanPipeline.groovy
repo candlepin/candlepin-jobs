@@ -135,11 +135,11 @@ stage('test') {
             currentBuild.result = 'FAILURE'
             githubStatus(status: 'FAILURE', context: 'jenkins-pipeline', targetUrl: BUILD_URL)
 
-            try {
-              branch = "${env.GIT_BRANCH}"
-              pr = branch.split('/')[2]
+            if (ghprbPullId) {
+              pr = ghprbPullId
               sendIrcNotification('#candlepin', "tests failed for pull request: ${pr}. See https://github.com/candlepin/subscription-manager/pull/${pr} for details.")
-            } catch(e) {
+            }
+            else {
               sendIrcNotification('#candlepin', "subscription-manager build # ${env.BUILD_NUMBER} failed. See ${env.BUILD_URL} for details.")
             }
 
