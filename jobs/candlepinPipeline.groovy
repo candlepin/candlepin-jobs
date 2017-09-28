@@ -131,6 +131,13 @@ stage('test') {
                 ]]))
             }
         },
+        'jenkins-bugzilla-reference': {
+            results.add(buildWithNotifications(context: 'jenkins-bugzilla-reference', job: "candlepin-check-bugzilla-reference", parameters: [[
+                $class: 'StringParameterValue',
+                name: 'pr_number',
+                value: "${ghprbPullId}"
+            ]]))
+        }
     )
     node('master') {
         def buildPassed = !results.contains('FAILURE') && !results.contains('ABORTED') && !results.contains('UNSTABLE')

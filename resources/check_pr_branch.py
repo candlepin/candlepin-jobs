@@ -35,14 +35,18 @@ if not github_token:
 
 
 parser = argparse.ArgumentParser(description='check that a candlepin PR references the correct BZ')
-parser.add_argument('--sha1', help='the commit hash to examine', required=True)
-parser.add_argument('--target', help='the target branch', required=True)
+parser.add_argument('pr', help='the pr number to examine')
 args = parser.parse_args()
+
+# fetch pr
+pr = requests.get('https://api.github.com/repos/candlepin/candlepin/pulls/{pr}'.format(pr=args.pr),
+                  headers={'Authorization': 'token {}'.format(github_token)}).json()
+target = pr['base']['ref']
 
 bz = Bugzilla(bugzilla_url, user=bugzilla_user, password=bugzilla_password)
 
 version = None
-if args.target == 'master':
+if target == 'master':
     # fetch master spec and then parse from it
     spec_file = requests.get('https://raw.githubusercontent.com/candlepin/candlepin/master/server/candlepin.spec.tmpl').text
     for line in spec_file.split('\n'):
@@ -50,33 +54,36 @@ if args.target == 'master':
             match = re.search('^Version: (\d+\.\d+)\.\d+$', line)
             version = match.group(1)
 else:
-    version_match = re.search('^candlepin-(.*)-HOTFIX$', args.target)
+    version_match = re.search('^candlepin-(.*)-HOTFIX$', target)
     if version_match:
         version = version_match.group(1)
 if not version:
     print('Skipping because target branch is not master or HOTFIX branch')
     sys.exit(0)
 
-message = requests.get('https://api.github.com/repos/candlepin/candlepin/git/commits/{sha1}'.format(sha1=args.sha1),
-                       headers={'Authorization': 'token {}'.format(github_token)}).json()['message']
+pr_commits = requests.get('https://api.github.com/repos/candlepin/candlepin/pulls/{pr}/commits'.format(pr=args.pr),
+                          headers={'Authorization': 'token {}'.format(github_token)}).json()
 
-first_line = message.split('\n')[0]
+for commit in pr_commits:
+    message = commit['commit']['message']
 
-match = re.search('^(\d+):? ', first_line)
-if match:
-    bz_number = match.group(1)
-    bug = bz.getbug(bz_number)
+    first_line = message.split('\n')[0]
 
-    target_release = bug.target_release[0]
-    if '---' in target_release:
-        target_release = None
+    match = re.search('^(\d+):? ', first_line)
+    if match:
+        bz_number = match.group(1)
+        bug = bz.getbug(bz_number)
+
+        target_release = bug.target_release[0]
+        if '---' in target_release:
+            target_release = None
 
 
-    final_version = target_release or bug.version
-    if final_version != version:
-        print(UH_OH)
-        print('BZ references {final_version}, while PR references {version}'.format(final_version=final_version, version=version))
-        sys.exit(1)
-    print('Looks good, both BZ and PR reference {version}').format(version=version)
-else:
-    print('Skipping as commit message does not appear to reference a BZ number.')
+        final_version = target_release or bug.version
+        if final_version != version:
+            print(UH_OH)
+            print('{commit}: BZ#{bz_number} references {final_version}, while PR references {version}'.format(commit=commit['sha'], bz_number=bz_number, final_version=final_version, version=version))
+            sys.exit(1)
+        print('{commit} looks good, both BZ and PR reference {version}').format(commit=commit['sha'], version=version)
+    else:
+        print('{commit} does not appear to reference a BZ number.'.format(commit=commit['sha']))

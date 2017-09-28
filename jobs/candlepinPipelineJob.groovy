@@ -20,6 +20,7 @@ pipeline_helper = job("$baseFolder/candlepin-pipeline-helper") {
                     predefinedProp('ghprbActualCommit', '${ghprbActualCommit}')
                     predefinedProp('emailDestination', '${emailDestination}')
                     predefinedProp('ghprbTargetBranch', '${ghprbTargetBranch}')
+                    predefinedProp('ghprbPullId', '${ghprbPullId}')
                 }
             }
         }

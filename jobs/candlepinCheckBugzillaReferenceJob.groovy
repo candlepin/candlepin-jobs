@@ -5,8 +5,7 @@ String baseFolder = rhsmLib.candlepinJobFolder
 job("$baseFolder/candlepin-check-bugzilla-reference") {
     description('Check that a PR references the proper BZ')
     parameters {
-        stringParam('sha1', null, 'sha1 of the commit to check')
-        stringParam('target', null, 'which branch the commit targets')
+        stringParam('pr_number', null, 'PR number to check')
     }
     wrappers {
         credentialsBinding {
@@ -21,6 +20,6 @@ job("$baseFolder/candlepin-check-bugzilla-reference") {
         daysToKeep(90)
     }
     steps {
-        shell 'python resources/check_pr_branch.py --sha1 $sha1 --target $target'
+        shell 'python resources/check_pr_branch.py ${pr_number}'
     }
 }
