@@ -10,6 +10,14 @@ import sys
 from bugzilla import Bugzilla
 import requests
 
+UH_OH = '''
+       _                 _     _
+ _   _| |__         ___ | |__ | |
+| | | | '_ \ _____ / _ \| '_ \| |
+| |_| | | | |_____| (_) | | | |_|
+ \__,_|_| |_|      \___/|_| |_(_)
+'''
+
 config = ConfigParser()
 with open(os.path.join(os.path.expanduser('~'), 'automation.properties'), 'rb') as config_file:
     file_content = config_file.read().decode('utf-8')
@@ -66,6 +74,7 @@ if match:
 
     final_version = target_release or bug.version
     if final_version != version:
+        print(UH_OH)
         print('BZ references {final_version}, while PR references {version}'.format(final_version=final_version, version=version))
         sys.exit(1)
     print('Looks good, both BZ and PR reference {version}').format(version=version)
