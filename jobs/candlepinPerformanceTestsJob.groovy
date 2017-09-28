@@ -3,6 +3,7 @@ import jobLib.rhsmLib
 String baseFolder = rhsmLib.candlepinJobFolder
 
 job("$baseFolder/CandlepinPerformance") {
+    disabled()
     description('This job runs candlepin performance tests')
     label('rhsm')
     wrappers {
