@@ -34,6 +34,7 @@ pipeline = pipelineJob("$baseFolder/candlepin") {
         stringParam('ghprbActualCommit', null, 'commit used to report status against a GitHub PR')
         stringParam('ghprbTargetBranch', null, 'PR target branch')
         stringParam('emailDestination', null, 'email address to report failures to')
+        stringParam('ghprbPullId', null, 'PR number (used in certain checks)')
     }
     logRotator {
         numToKeep(20)
