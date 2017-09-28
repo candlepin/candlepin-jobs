@@ -21,6 +21,6 @@ job("$baseFolder/candlepin-check-bugzilla-reference") {
         daysToKeep(90)
     }
     steps {
-        shell 'python check_pr_branch.py --sha1 $sha1 --target $target'
+        shell 'python resources/check_pr_branch.py --sha1 $sha1 --target $target'
     }
 }
