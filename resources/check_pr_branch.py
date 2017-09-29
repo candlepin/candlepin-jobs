@@ -45,14 +45,23 @@ target = pr['base']['ref']
 
 bz = Bugzilla(bugzilla_url, user=bugzilla_user, password=bugzilla_password)
 
-version = None
-if target == 'master':
-    # fetch master spec and then parse from it
+master_version = None
+def fetch_master_version():
+    global master_version
+    if master_version:
+        return master_version
     spec_file = requests.get('https://raw.githubusercontent.com/candlepin/candlepin/master/server/candlepin.spec.tmpl').text
     for line in spec_file.split('\n'):
         if line.startswith('Version:'):
             match = re.search('^Version: (\d+\.\d+)\.\d+$', line)
             version = match.group(1)
+            master_version = version
+            return version
+
+version = None
+if target == 'master':
+    # fetch master spec and then parse from it
+    version = fetch_master_version()
 else:
     version_match = re.search('^candlepin-(.*)-HOTFIX$', target)
     if version_match:
@@ -76,7 +85,7 @@ for commit in pr_commits:
 
         target_release = bug.target_release[0]
         if '---' in target_release:
-            target_release = None
+            target_release = fetch_master_version()
 
 
         final_version = target_release or bug.version
