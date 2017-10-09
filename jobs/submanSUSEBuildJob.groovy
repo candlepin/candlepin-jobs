@@ -30,9 +30,11 @@ DISTROS.each { name, repo_name ->
         steps {
             shell "scripts/suse_build.sh \"\${obs_project_name}\" \"${repo_name}\" -k \$WORKSPACE"
             shell """
-cd python-rhsm
-../scripts/suse_build.sh \"\${obs_project_name}\" \"${repo_name}\" -k \$WORKSPACE
-cd ..
+if [ -d python-rhsm ]; then
+  cd python-rhsm
+  ../scripts/suse_build.sh \"\${obs_project_name}\" \"${repo_name}\" -k \$WORKSPACE
+  cd ..
+fi
 """
             shell '''
 # adapted from QE-RPMs jobs (thanks jsefler)

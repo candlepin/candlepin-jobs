@@ -29,6 +29,11 @@ def rhsmJob = job("$baseFolder/subscription-manager-nose-tests-pr"){
             }
             report('python-rhsm/htmlcov/') {
                 reportName('python-rhsm coverage module html report')
+                allowMissing()
+            }
+            report('htmlcov/') {
+                reportName('python-rhsm coverage module html report')
+                allowMissing()
             }
         }
     }

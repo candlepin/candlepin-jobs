@@ -20,9 +20,11 @@ distros.each { distro ->
         }
         steps {
             shell '''
-pushd python-rhsm
+if [ -d python-rhsm ]; then
+  pushd python-rhsm
+fi
 python setup.py build_ext --inplace
-popd
+cd $WORKSPACE
 sudo -i bash -c "cd $WORKSPACE; PYTHONPATH=$WORKSPACE/src:$WORKSPACE/python-rhsm/src nosetests -c playpen/noserc.zypper test/zypper_test"
 '''
             shell 'sudo chown -R $USER $WORKSPACE' // since we just ran w/ sudo

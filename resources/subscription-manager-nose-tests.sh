@@ -22,7 +22,9 @@ virtualenv env --system-site-packages || true
 source env/bin/activate
 
 # build/test python-rhsm
-pushd $WORKSPACE/python-rhsm
+if [ -d $WORKSPACE/python-rhsm ]; then
+  pushd $WORKSPACE/python-rhsm
+fi
 PYTHON_RHSM=$(pwd)
 
 # build the c modules
