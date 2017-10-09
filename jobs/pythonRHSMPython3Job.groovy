@@ -18,10 +18,16 @@ def pyrhsmJob = job("$baseFolder/python-rhsm-python3-tests-pr-builder"){
     publishers {
         archiveArtifacts {
             pattern('python-rhsm/nosetests.xml')
+            pattern('nosetests.xml')
         }
         publishHtml {
             report('python-rhsm/htmlcov/') {
                 reportName('Coverage module html report')
+                allowMissing()
+            }
+            report('htmlcov/') {
+                reportName('Coverage module html report')
+                allowMissing()
             }
         }
     }

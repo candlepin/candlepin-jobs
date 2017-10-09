@@ -21,8 +21,13 @@ echo "sha" "${sha1}"
 # so we can run these all everytime, we don't actually fail on each step, so checkout for output
 #TMPFILE=`mktemp`|| exit 1; $(make stylish | tee $TMPFILE); if [ -s $TMPFILE ] ; then echo "FAILED"; cat $TMPFILE; exit 1; fi
 
-
-pushd python-rhsm
+if [ -d python-rhsm ]; then
+  pushd python-rhsm
+  UNIT_TEST_DIR=test/unit
+else
+  UNIT_TEST_DIR=test/rhsm/unit
+fi
+echo $UNIT_TEST_DIR
 PYTHON_RHSM=$(pwd)
 
 # build the c modules
@@ -34,7 +39,7 @@ python3 setup.py build_ext --inplace
 
 # Run just the unit tests, functional needs a running candlepin
 #pushd test/unit
-nosetests-3 --with-xunit --with-cover --cover-package rhsm --cover-erase test/unit/
+nosetests-3 --with-xunit --with-cover --cover-package rhsm --cover-erase $UNIT_TEST_DIR
 
 SRC_DIR=$PYTHON_RHSM/src/rhsm/
 coverage3 html --include "${SRC_DIR}/*"
