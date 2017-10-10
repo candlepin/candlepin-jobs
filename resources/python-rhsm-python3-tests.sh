@@ -43,7 +43,7 @@ python3 setup.py build_ext --inplace
 
 # Run just the unit tests, functional needs a running candlepin
 #pushd test/unit
-nosetests-3 --with-xunit --with-cover --cover-package rhsm --cover-erase $UNIT_TEST_DIR
+nosetests --with-xunit --with-cover --cover-package rhsm --cover-erase $UNIT_TEST_DIR
 
 SRC_DIR=$PYTHON_RHSM/src/rhsm/
 coverage3 html --include "${SRC_DIR}/*"
