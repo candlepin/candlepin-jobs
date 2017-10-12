@@ -21,7 +21,6 @@ sudo yum-builddep subscription-manager.spec  # ensure we install any missing rpm
 virtualenv env -p python3 --system-site-packages || true
 source env/bin/activate
 pip install -I -r test-requirements.txt
-rehash
 
 # so we can run these all everytime, we don't actually fail on each step, so checkout for output
 #TMPFILE=`mktemp`|| exit 1; $(make stylish | tee $TMPFILE); if [ -s $TMPFILE ] ; then echo "FAILED"; cat $TMPFILE; exit 1; fi
