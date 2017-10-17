@@ -10,4 +10,7 @@ for HOST in $(echo $DOCKER_HOSTS | sed "s/,/ /g"); do
   jssh ${HOST} "docker images -q | xargs -r docker rmi -f"
   jssh ${HOST} "docker ps -aq | xargs -r docker rm -f"
   jssh ${HOST} "docker volume ls -q | xargs -r docker volume rm"
+  if [ "$RESTART_DOCKER" = 'true' ]; then
+    jssh ${HOST} "systemctl restart docker"
+  fi
 done

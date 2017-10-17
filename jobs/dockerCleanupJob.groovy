@@ -14,6 +14,7 @@ job("DockerCleanup"){
     label('rhsm')
     parameters {
         stringParam('DOCKER_HOSTS', listOfSlaves(0,6), 'Hostnames of servers to run on.')
+        booleanParam('RESTART_DOCKER', false, 'Restart docker afterwards if checked.')
     }
     wrappers {
         sshAgent('fe2c79db-3166-4e61-8996-a8e7de7fbb5c')
