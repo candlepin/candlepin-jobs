@@ -8,11 +8,6 @@ job("$baseFolder/CandlepinPerformance") {
     label('rhsm')
     wrappers {
         preBuildCleanup()
-        configFiles {
-            file('candlepinPerformanceInventory') {
-                variable('PERF_INVENTORY')
-            }
-        }
         colorizeOutput()
     }
     properties {
@@ -43,7 +38,7 @@ job("$baseFolder/CandlepinPerformance") {
     }
     steps {
         ansiblePlaybook('ansible/candlepin.yml') {
-            inventoryPath('${PERF_INVENTORY}')
+            inventoryPath('/etc/performanceInventory')
             credentialsId('fe2c79db-3166-4e61-8996-a8e7de7fbb5c')
             additionalParameters('--extra-vars=\"candlepin_branch=${ghprbActualCommit} caracalla_branch=${caracalla_branch} candlepin_throughput_properties=${candlepin_throughput_properties} loop_over_apis_properties=${loop_over_apis_properties} jmeter_tests=${jmeter_tests} target_branch=${target_branch} keep_logs=${keep_logs}\"')
             colorizedOutput(true)
