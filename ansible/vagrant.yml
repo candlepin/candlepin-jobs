@@ -1,6 +1,23 @@
 ---
 - hosts: all
   become: true
+
+  pre_tasks:
+    - name: create jenkins group
+      group:
+        name: jenkins
+        state: present
+        gid: 1001
+
+    - name: create jenkins user
+      user:
+        name: jenkins
+        state: present
+        uid: 1001
+        group: jenkins
+        home: /var/lib/jenkins
+        system: yes
+
   vars:
     java_packages:
       - java-1.8.0-openjdk
@@ -8,7 +25,6 @@
       - ansible
       - ansicolor
       - build-timeout
-      - config-file-provider
       - credentials-binding
       - email-ext
       - envinject
@@ -82,14 +98,3 @@
       retries: "60"
       delay: "5"
       changed_when: false
-
-    - name: create dummy config files
-      shell: >
-        echo "javaposse.jobdsl.plugin.ConfigFileProviderHelper.findConfigProvider(javaposse.jobdsl.dsl.ConfigFileType.Custom).save(new org.jenkinsci.plugins.configfiles.custom.CustomConfig('{{ item }}', '{{ item }}', 'dummy file', ''))" |
-        java -jar /opt/jenkins-cli.jar
-        -s http://localhost:8080/
-        groovy =
-        --username admin --password admin
-      with_items: "{{ jenkins_dummy_configs }}"
-      tags:
-        - dummyconfig
