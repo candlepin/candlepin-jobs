@@ -20,7 +20,10 @@ def rhsmJob = job("$baseFolder/subscription-manager-suse-upload"){
         numToKeep(20)
     }
     steps {
-        shell 'scripts/suse_upload.sh "${obs_project_name}" -m "Automated upload of ${GIT_COMMIT}"'
+        shell """
+. ~/.bashrc
+scripts/suse_upload.sh "${obs_project_name}" -m "Automated upload of ${GIT_COMMIT}"
+"""
     }
 }
 

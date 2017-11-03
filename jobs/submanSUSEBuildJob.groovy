@@ -28,8 +28,12 @@ DISTROS.each { name, repo_name ->
             numToKeep(20)
         }
         steps {
-            shell "scripts/suse_build.sh \"\${obs_project_name}\" \"${repo_name}\" -k \$WORKSPACE"
             shell """
+. ~/.bashrc
+scripts/suse_build.sh \"\${obs_project_name}\" \"${repo_name}\" -k \$WORKSPACE
+"""
+            shell """
+. ~/.bashrc
 if [ -d python-rhsm ]; then
   cd python-rhsm
   ../scripts/suse_build.sh \"\${obs_project_name}\" \"${repo_name}\" -k \$WORKSPACE
