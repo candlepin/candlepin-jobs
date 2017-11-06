@@ -11,7 +11,7 @@ Vagrant.configure(2) do |config|
   if Vagrant.has_plugin?("vagrant-hostmanager")
     config.hostmanager.enabled = true
     config.hostmanager.manage_host = true
-    config.hostmanager.manage_guest = true
+    config.hostmanager.manage_guest = false
   end
 
   config.vm.define "jenkins" do |jenkins|

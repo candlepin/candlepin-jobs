@@ -18,6 +18,12 @@
         home: /var/lib/jenkins
         system: yes
 
+    - name: fix resolv.conf
+      lineinfile:
+        path: /etc/resolv.conf
+        state: absent
+        line: "search example.com"
+
   vars:
     java_packages:
       - java-1.8.0-openjdk
