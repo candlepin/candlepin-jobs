@@ -12,7 +12,7 @@ def DISTROS = [ // values can be found via `osc repos`
 DISTROS.each { name, repo_name ->
     def rhsmJob = job("$baseFolder/subscription-manager-suse-build-${name}"){
         description("Build SUSE RPMs locally for ${name}")
-        label(name)
+        label('opensuse42')
         parameters {
             // FIXME move out of home:kahowell?
             stringParam('obs_project_name', 'home:kahowell', 'Build Service project to reference for config.')
