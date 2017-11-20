@@ -12,9 +12,10 @@ sourceSets {
 }
 
 repositories {
-    mavenCentral()
-    jcenter()
+    maven { url 'http://bits.netbeans.org/maven2' }
     maven { url 'http://repo.jenkins-ci.org/releases/' }
+    jcenter()
+    mavenCentral()
 }
 
 configurations {
