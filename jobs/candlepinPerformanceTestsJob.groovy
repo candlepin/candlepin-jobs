@@ -9,6 +9,7 @@ job("$baseFolder/CandlepinPerformance") {
     wrappers {
         preBuildCleanup()
         colorizeOutput()
+        timestamps()
     }
     properties {
         githubProjectUrl('https://github.com/candlepin/candlepin/')
