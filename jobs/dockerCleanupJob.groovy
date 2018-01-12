@@ -13,7 +13,7 @@ job("DockerCleanup"){
     description('This job deletes unused docker images across all the slave nodes.')
     label('rhsm')
     parameters {
-        stringParam('DOCKER_HOSTS', listOfSlaves(0,6), 'Hostnames of servers to run on.')
+        stringParam('DOCKER_HOSTS', listOfSlaves(0,7), 'Hostnames of servers to run on.')
         booleanParam('RESTART_DOCKER', false, 'Restart docker afterwards if checked.')
     }
     wrappers {
