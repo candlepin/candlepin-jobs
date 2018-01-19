@@ -18,21 +18,12 @@ echo "sha" "${sha1}"
 
 
 sudo yum-builddep subscription-manager.spec  # ensure we install any missing rpm deps
-virtualenv env -p python3 --system-site-packages || true
+virtualenv env -p python3 --system-site-packages || virtualenv-3 env --system-site-packages || true
 source env/bin/activate
 pip install -I -r test-requirements.txt
 
 # so we can run these all everytime, we don't actually fail on each step, so checkout for output
 #TMPFILE=`mktemp`|| exit 1; $(make stylish | tee $TMPFILE); if [ -s $TMPFILE ] ; then echo "FAILED"; cat $TMPFILE; exit 1; fi
-
-if [ -d python-rhsm ]; then
-  pushd python-rhsm
-  UNIT_TEST_DIR=test/unit
-else
-  UNIT_TEST_DIR=test/rhsm/unit
-fi
-echo $UNIT_TEST_DIR
-PYTHON_RHSM=$(pwd)
 
 # build the c modules
 python3 setup.py build
@@ -43,8 +34,7 @@ python3 setup.py build_ext --inplace
 
 # Run just the unit tests, functional needs a running candlepin
 #pushd test/unit
-nosetests --with-xunit --with-cover --cover-package rhsm --cover-erase $UNIT_TEST_DIR
+nosetests --with-xunit --with-cover --cover-package rhsm --cover-package subscription_manager --cover-erase
 
-SRC_DIR=$PYTHON_RHSM/src/rhsm/
-coverage3 html --include "${SRC_DIR}/*"
-coverage3 xml --include "${SRC_DIR}/*"
+coverage3 html
+coverage3 xml

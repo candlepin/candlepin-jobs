@@ -86,8 +86,8 @@ stage('test') {
                 value: "${sha1}"
             ]]))
         },
-        'python-rhsm-python3': {
-            results.add(buildWithNotifications(context: 'python-rhsm-python3', job: "python-rhsm-python3-tests-pr-builder", parameters: [[
+        'python3': {
+            results.add(buildWithNotifications(context: 'rhsm-python3', job: "subscription-manager-python3-tests-pr-builder", parameters: [[
                 $class: 'StringParameterValue',
                 name: 'sha1',
                 value: "${sha1}"
