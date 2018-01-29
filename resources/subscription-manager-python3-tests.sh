@@ -34,7 +34,8 @@ python3 setup.py build_ext --inplace
 
 # Run just the unit tests, functional needs a running candlepin
 #pushd test/unit
-nosetests --with-xunit --with-cover --cover-package rhsm --cover-package subscription_manager --cover-erase
+# make sure we have a dbus session for the dbus tests
+dbus-run-session nosetests --with-xunit --with-cover --cover-package rhsm --cover-package subscription_manager --cover-erase
 
 coverage3 html
 coverage3 xml
