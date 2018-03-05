@@ -9,13 +9,12 @@ GITHUB_COMMIT = ghprbActualCommit ?: sha1
 PENDING_MESSAGE = 'Build has been scheduled.'
 SUCCESS_MESSAGE = 'Test(s) passed.'
 FAILURE_MESSAGE = 'Test(s) failed.'
-PERFORMANCE_BRANCH_BLACKLIST = [
+QPID_BRANCH_BLACKLIST = [
     '0.9.23-hotfix',
     'candlepin-0.9.49-HOTFIX',
     'candlepin-0.9.51-HOTFIX',
     'candlepin-0.9.54-HOTFIX',
 ]
-QPID_BRANCH_BLACKLIST = PERFORMANCE_BRANCH_BLACKLIST // they're the same at the moment
 STATUS_MESSAGE_MAP = [
     'PENDING': PENDING_MESSAGE,
     'SUCCESS': SUCCESS_MESSAGE,
@@ -84,15 +83,6 @@ stage('test') {
                 name: 'sha1',
                 value: "${sha1}"
             ]]))
-        },
-        'performance': {
-            if (!PERFORMANCE_BRANCH_BLACKLIST.contains(ghprbTargetBranch)) {
-                results.add(buildWithNotifications(context: 'jenkins-candlepin-performance', job: "CandlepinPerformance", parameters: [[
-                     $class: 'StringParameterValue',
-                     name  : 'ghprbActualCommit',
-                     value : "${sha1}"
-                ]]))
-            }
         },
         'rspec-postgres': {
             results.add(buildWithNotifications(context: 'jenkins-rspec-postgresql', job: "candlepin-pullrequest-spectests-postgresql", parameters: [[
