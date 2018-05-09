@@ -26,5 +26,19 @@ job("$baseFolder/candlepin-docker-images") {
         irc {
             channel('#candlepin')
         }
+        extendedEmail {
+            recipientList('chainsaw@redhat.com')
+            defaultSubject('Candlepin docker images failed to build')
+            defaultContent('See $BUILD_URL')
+            contentType('text/html')
+            triggers {
+                failure {
+                    sendTo {
+                        recipientList('chainsaw@redhat.com')
+                    }
+                    attachBuildLog()
+                }
+            }
+        }
     }
 }
