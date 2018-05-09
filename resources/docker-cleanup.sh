@@ -1,7 +1,7 @@
 #!/bin/bash -x
 
 function jssh(){
-  ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no jenkins@${1} ${2}
+  ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no jenkins@${1} "${2}"
 }
 
 for HOST in $(echo $DOCKER_HOSTS | sed "s/,/ /g"); do
