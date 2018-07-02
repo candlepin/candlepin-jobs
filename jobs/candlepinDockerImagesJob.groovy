@@ -12,6 +12,9 @@ job("$baseFolder/candlepin-docker-images") {
     wrappers {
         preBuildCleanup()
         colorizeOutput()
+        credentialsBinding {
+            string('DOCKER-API-TOKEN', 'CANDLEPIN-DOCKER-API-TOKEN')
+        }
     }
     logRotator{
         daysToKeep(90)
