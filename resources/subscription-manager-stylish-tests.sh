@@ -21,6 +21,8 @@ sudo yum-builddep subscription-manager.spec  # ensure we install any missing rpm
 virtualenv env
 source env/bin/activate
 
+make install-pip-requirements
+
 # build/test python-rhsm
 if [ -d $WORKSPACE/python-rhsm ]; then
   pushd $WORKSPACE/python-rhsm
@@ -39,8 +41,6 @@ cp build/lib.linux-*/rhsm/_certificate.so src/rhsm/
 pushd $WORKSPACE
 export PYTHONPATH="$PYTHON_RHSM"/src
 
-
-make install-pip-requirements
 make set-versions
 # capture exit status of 'make stylish' and not 'tee'
 ( set -o pipefail; make stylish | tee stylish_results.txt )
