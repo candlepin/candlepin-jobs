@@ -21,6 +21,8 @@ sudo yum-builddep subscription-manager.spec  # ensure we install any missing rpm
 virtualenv env --system-site-packages || true
 source env/bin/activate
 
+make install-pip-requirements
+
 # build/test python-rhsm
 if [ -d $WORKSPACE/python-rhsm ]; then
   pushd $WORKSPACE/python-rhsm
@@ -44,7 +46,5 @@ echo "PYTHONPATH=$PYTHONPATH"
 echo "PATH=$PATH"
 echo
 
-
-make install-pip-requirements
 make build
 make coverage
