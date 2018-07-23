@@ -8,6 +8,9 @@ def job = job("$baseFolder/subscription-manager-python3-tests-pr-builder"){
     label('rhsm')
     wrappers {
         preBuildCleanup()
+        timeout {
+            absolute(5)
+        }
     }
     logRotator{
         numToKeep(20)

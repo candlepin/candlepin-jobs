@@ -9,6 +9,9 @@ def rhsmJob = job("$baseFolder/subscription-manager-nose-tests-pr"){
     wrappers {
         preBuildCleanup()
         colorizeOutput('css')
+        timeout {
+            absolute(5)
+        }
     }
     logRotator{
         numToKeep(20)
