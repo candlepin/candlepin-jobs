@@ -22,8 +22,8 @@ fi
 echo "sha" "${sha1}"
 
 
-sudo yum clean expire-cache
-sudo yum-builddep subscription-manager.spec  # ensure we install any missing rpm deps
+sudo dnf clean expire-cache
+sudo dnf builddep subscription-manager.spec  # ensure we install any missing rpm deps
 virtualenv env --system-site-packages || true
 source env/bin/activate
 make install-pip-requirements

@@ -17,8 +17,8 @@ echo "sha1:" "${sha1}"
 
 cd $WORKSPACE
 
-sudo yum clean expire-cache
-sudo yum-builddep subscription-manager.spec  # ensure we install any missing rpm deps
+sudo dnf clean expire-cache
+sudo dnf builddep subscription-manager.spec  # ensure we install any missing rpm deps
 virtualenv env
 source env/bin/activate
 
