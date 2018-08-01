@@ -19,12 +19,15 @@ def rhsmJob = job("$baseFolder/subscription-manager-nose-tests-pr"){
     steps {
         shell readFileFromWorkspace('resources/subscription-manager-nose-tests.sh')
         shell readFileFromWorkspace('resources/python-rhsm-nose-tests.sh')
+        shell readFileFromWorkspace('resources/syspurpose-nose-tests.sh')
     }
     publishers {
         archiveArtifacts {
             pattern('nosetests.xml')
             pattern('coverage.xml')
             pattern('python-rhsm/nosetests.xml')
+            pattern('syspurpose/nosetests.xml')
+            pattern('syspurpose/coverage.xml')
         }
         publishHtml {
             report('cover/') {
@@ -36,6 +39,10 @@ def rhsmJob = job("$baseFolder/subscription-manager-nose-tests-pr"){
             }
             report('htmlcov/') {
                 reportName('python-rhsm coverage module html report')
+                allowMissing()
+            }
+            report('syspurpose/htmlcov/') {
+                reportName('syspurpose coverage module html report')
                 allowMissing()
             }
         }
