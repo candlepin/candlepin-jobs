@@ -1,4 +1,3 @@
-#! /bin/sh
 cd $WORKSPACE
 
 # Do nothing if syspurpose directory is absent
