@@ -1,4 +1,4 @@
-virtualenv env --system-site-packages || true
+virtualenv env --system-site-packages -p python2 || true
 source env/bin/activate
 make install-pip-requirements
 if [ -d python-rhsm ]; then

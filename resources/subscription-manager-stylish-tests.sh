@@ -19,7 +19,7 @@ cd $WORKSPACE
 
 sudo dnf clean expire-cache
 sudo dnf builddep subscription-manager.spec  # ensure we install any missing rpm deps
-virtualenv env
+virtualenv env -p python2
 source env/bin/activate
 
 make install-pip-requirements
