@@ -4,6 +4,7 @@ String baseFolder = rhsmLib.candlepinJobFolder
 
 job("$baseFolder/CandlepinUpdatePerformanceBaseline") {
     description('This job updates the performance test baseline data.')
+    disabled(true)
     label('rhsm')
     wrappers {
         preBuildCleanup()
