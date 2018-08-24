@@ -15,7 +15,6 @@ TEST_DB=""
 case $CANDLEPIN_DATABASE in
   mysql) TEST_DB="-m";;
   postgresql) TEST_DB="-p";;
-  oracle) TEST_DB="-o";;
 esac
 
 ./docker/test $TEST_DB -c "cp-test ${CP_TEST_ARGS} -c ${sha1}" -n "rspec-${BUILD_TAG}"
