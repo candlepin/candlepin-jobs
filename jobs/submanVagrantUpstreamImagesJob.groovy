@@ -4,6 +4,9 @@ String baseFolder = rhsmLib.submanJobFolder
 job("$baseFolder/vagrant-upstream-images") {
     description('builds centos, fedora, etc. vagrant images for subman development')
     label('rhsm-packer')
+    scm {
+        github('candlepin/packer', 'master')
+    }
     wrappers {
         colorizeOutput()
         credentialsBinding {
