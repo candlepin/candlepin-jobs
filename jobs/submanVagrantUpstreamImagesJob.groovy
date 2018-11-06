@@ -3,7 +3,7 @@ String baseFolder = rhsmLib.submanJobFolder
 
 pipeline_helper = job("$baseFolder/vagrant-upstream-images") {
     description('builds centos, fedora, etc. vagrant images for subman development')
-    label('rhsm')
+    label('rhsm-packer')
     wrappers {
         colorizeOutput()
     }
