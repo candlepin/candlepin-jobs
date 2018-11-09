@@ -28,11 +28,9 @@ pipeline = pipelineJob("$baseFolder/subscription-manager") {
     logRotator {
         numToKeep(20)
     }
-    steps {
-        definition {
-            cps {
-                script(readFileFromWorkspace('jobs/submanPipeline.groovy'))
-            }
+    definition {
+        cps {
+            script(readFileFromWorkspace('jobs/submanPipeline.groovy'))
         }
     }
 }

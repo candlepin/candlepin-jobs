@@ -39,11 +39,9 @@ pipeline = pipelineJob("$baseFolder/candlepin") {
     logRotator {
         numToKeep(20)
     }
-    steps {
-        definition {
-            cps {
-                script(readFileFromWorkspace('jobs/candlepinPipeline.groovy'))
-            }
+    definition {
+        cps {
+            script(readFileFromWorkspace('jobs/candlepinPipeline.groovy'))
         }
     }
 }
