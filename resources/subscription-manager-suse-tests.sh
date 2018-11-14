@@ -1,3 +1,4 @@
+sudo cp src/zypper/services/rhsm /usr/lib/zypp/plugins/services/
 virtualenv env --system-site-packages -p python2 || true
 source env/bin/activate
 make install-pip-requirements
