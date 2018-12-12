@@ -1,156 +1,163 @@
-import hudson.plugins.ircbot.v2.IRCConnectionProvider
-import jenkins.model.Jenkins
+@Library('github.com/candlepin/candlepin-jobs') _
 
-REPO = 'https://github.com/candlepin/candlepin'
-GITHUB_CREDENTIALS_ID = 'github-api-token-as-username-password'
-GITHUB_ACCOUNT = 'candlepin'
-GITHUB_REPO = 'candlepin'
-GITHUB_COMMIT = ghprbActualCommit ?: sha1
-PENDING_MESSAGE = 'Build has been scheduled.'
-SUCCESS_MESSAGE = 'Test(s) passed.'
-FAILURE_MESSAGE = 'Test(s) failed.'
-QPID_BRANCH_BLACKLIST = [
-    '0.9.23-hotfix',
-    'candlepin-0.9.49-HOTFIX',
-    'candlepin-0.9.51-HOTFIX',
-    'candlepin-0.9.54-HOTFIX',
-]
-STATUS_MESSAGE_MAP = [
-    'PENDING': PENDING_MESSAGE,
-    'SUCCESS': SUCCESS_MESSAGE,
-    'FAILURE': FAILURE_MESSAGE,
-]
-
-def sendIrcNotification(channel, text) {
-    try {
-        IRCConnectionProvider.getInstance().currentConnection().send(channel, text)
-    } catch(e) {
-        echo "Unable to send IRC notification to ${channel}: ${e}"
+pipeline {
+    agent none
+    parameters {
+        string(name: 'commit', description:'What to test. Use origin/pr/<pr_number>/merge to test a PR')
+        booleanParam(name: 'TEST_UNIT_TESTS', defaultValue: true, description: 'Run unit tests')
+        booleanParam(name: 'TEST_BZ_REFERENCE', defaultValue: true, description: 'Run BZ reference check')
+        booleanParam(name: 'TEST_CHECKSTYLE', defaultValue: true, description: 'Run checkstyle tests')
+        booleanParam(name: 'TEST_MYSQL', defaultValue: true, description: 'Run mysql spec tests')
+        booleanParam(name: 'TEST_POSTGRES', defaultValue: true, description: 'Run postgres spec tests')
+        booleanParam(name: 'TEST_HOSTED_MYSQL', defaultValue: true, description: 'Run hosted mysql spec tests')
+        booleanParam(name: 'TEST_HOSTED_POSTGRES', defaultValue: true, description: 'Run hosted postgres spec tests')
+        booleanParam(name: 'TEST_QPID', defaultValue: true, description: 'Run qpid spec tests')
     }
-}
-
-def githubStatus(Map args) {
-    description = args.get('description') ?: STATUS_MESSAGE_MAP[args.status]
-    try {
-        githubNotify(account: GITHUB_ACCOUNT, repo: GITHUB_REPO, credentialsId: GITHUB_CREDENTIALS_ID, sha: GITHUB_COMMIT,
-                status: args.status, description: description, context: args.context, targetUrl: args.targetUrl)
-    } catch (e) {
-        echo "Unable to update GitHub status (commit: ${GITHUB_COMMIT}, status: ${args.status}, context: ${args.context})"
-    }
-}
-
-def buildWithNotifications(Map args) {
-    boolean enabled = false
-    try {
-        enabled = Jenkins.instance.getItem(args.job, currentBuild.rawBuild.parent, Item.class).buildable
-    } catch (e) {
-        echo "Unable to get job status for ${args.job}; skipping build. Does the job exist?"
-        return 'SUCCESS'
-    }
-    if (!enabled) {
-        echo "Skipping ${args.job} as it is disabled."
-        return 'SUCCESS'
-    }
-    githubStatus(status: 'PENDING', context: args.context, targetUrl: BUILD_URL)
-    def buildInstance = build(job: args.job, parameters: args.parameters, propagate: false)
-    node('master') {
-        if (buildInstance.result == 'SUCCESS') {
-            githubStatus(status: 'SUCCESS', context: args.context, targetUrl: buildInstance.absoluteUrl)
-        }
-        else {
-            githubStatus(status: 'FAILURE', context: args.context, targetUrl: buildInstance.absoluteUrl)
-        }
-    }
-    return buildInstance.result
-}
-
-stage('test') {
-    node('master') {
-        githubStatus(status: 'PENDING', context: 'jenkins-pipeline', targetUrl: BUILD_URL)
-    }
-    def results = []
-    parallel(
-        'unit-tests': {
-            results.add(buildWithNotifications(context: 'jenkins-candlepin-unittests', job: "candlepin-pullrequest-unittests", parameters: [[
-                $class: 'StringParameterValue',
-                name: 'sha1',
-                value: "${sha1}"
-            ]]))
-        },
-        'lint': {
-            results.add(buildWithNotifications(context: 'jenkins-checkstyle', job: "candlepin-pullrequest-lint", parameters: [[
-                $class: 'StringParameterValue',
-                name: 'sha1',
-                value: "${sha1}"
-            ]]))
-        },
-        'rspec-postgres': {
-            results.add(buildWithNotifications(context: 'jenkins-rspec-postgresql', job: "candlepin-pullrequest-spectests-postgresql", parameters: [[
-                $class: 'StringParameterValue',
-                name: 'sha1',
-                value: "${sha1}"
-            ]]))
-        },
-        'rspec-mysql': {
-            results.add(buildWithNotifications(context: 'jenkins-rspec-mysql', job: "candlepin-pullrequest-spectests-mysql", parameters: [[
-                $class: 'StringParameterValue',
-                name: 'sha1',
-                value: "${sha1}"
-            ]]))
-        },
-        'rspec-hosted-postgres': {
-            results.add(buildWithNotifications(context: 'jenkins-rspec-hosted-postgres', job: "candlepin-pullrequest-spectests-hosted-postgresql", parameters: [[
-                $class: 'StringParameterValue',
-                name: 'sha1',
-                value: "${sha1}"
-            ]]))
-        },
-        'jenkins-rspec-hosted-mysql': {
-            results.add(buildWithNotifications(context: 'jenkins-rspec-hosted-mysql', job: "candlepin-pullrequest-spectests-hosted-mysql", parameters: [[
-                $class: 'StringParameterValue',
-                name: 'sha1',
-                value: "${sha1}"
-            ]]))
-        },
-        'jenkins-rspec-qpid': {
-            if (!QPID_BRANCH_BLACKLIST.contains(ghprbTargetBranch)) {
-                results.add(buildWithNotifications(context: 'jenkins-rspec-qpid', job: "candlepin-pullrequest-spectests-qpid", parameters: [[
-                    $class: 'StringParameterValue',
-                    name: 'sha1',
-                    value: "${sha1}"
-                ]]))
-            }
-        },
-        'jenkins-bugzilla-reference': {
-            results.add(buildWithNotifications(context: 'jenkins-bugzilla-reference', job: "candlepin-check-bugzilla-reference", parameters: [[
-                $class: 'StringParameterValue',
-                name: 'pr_number',
-                value: "${ghprbPullId}"
-            ]]))
-        }
-    )
-    node('master') {
-        def buildPassed = !results.contains('FAILURE') && !results.contains('ABORTED') && !results.contains('UNSTABLE')
-        if (!buildPassed) {
-            currentBuild.result = 'FAILURE'
-            githubStatus(status: 'FAILURE', context: 'jenkins-pipeline', targetUrl: BUILD_URL)
-
-            String subject = "candlepin - build # ${env.BUILD_NUMBER} - Failure"
-            emailext(
-                subject: subject,
-                body: "${subject}:\n\nCheck console output at ${env.BUILD_URL} to view the results",
-                to: emailDestination,
-            )
-            if (ghprbPullId) {
-              pr = ghprbPullId
-              sendIrcNotification('#candlepin', "tests failed for pull request: ${pr}. See https://github.com/candlepin/candlepin/pull/${pr} for details.")
-            }
-            else {
-              sendIrcNotification('#candlepin', "candlepin build # ${env.BUILD_NUMBER} failed. See ${env.BUILD_URL} for details.")
+    stages {
+        stage('Get PR number') {
+            script {
+                env.pr_number = null
+                if ("${commit}" ~== 'origin/pr/.*/merge') {
+                    env.pr_number = ("${commit}" ~= 'origin/pr/(.*)/merge')[0][1]
+                }
             }
         }
-        else {
-            githubStatus(status: 'SUCCESS', context: 'jenkins-pipeline', targetUrl: BUILD_URL)
+        stage('Get PR Info') {
+            steps {
+                getPrInfo(repo: 'candlepin', pr_number: env.pr_number)
+            }
+        }
+        stage('Set to pending on GitHub') {
+            steps {
+                githubStatus(repo: 'candlepin', sha: env.PR_SHA, status: 'PENDING', context: 'jenkins-pipeline', targetUrl: BUILD_URL)
+            }
+        }
+        stage('Run Tests') {
+            parallel {
+                stage('Unit Tests') {
+                    when {
+                        expression {
+                            return params.TEST_UNIT_TESTS
+                        }
+                    }
+                    steps {
+                        buildWithNotifications(repo: 'candlepin', sha: env.PR_SHA, context: 'jenkins-candlepin-unittests', job: "candlepin-pullrequest-unittests", parameters: [[
+                            $class: 'StringParameterValue',
+                            name: 'sha1',
+                            value: "${commit}"
+                        ]])
+                    }
+                }
+                stage('Checkstyle') {
+                    when {
+                        expression {
+                            return params.TEST_CHECKSTYLE
+                        }
+                    }
+                    steps {
+                        buildWithNotifications(repo: 'candlepin', sha: env.PR_SHA, context: 'jenkins-checkstyle', job: "candlepin-pullrequest-lint", parameters: [[
+                            $class: 'StringParameterValue',
+                            name: 'sha1',
+                            value: "${commit}"
+                        ]])
+                    }
+                }
+                stage('Rspec Postgresql') {
+                    when {
+                        expression {
+                            return params.TEST_POSTGRES
+                        }
+                    }
+                    steps {
+                        buildWithNotifications(repo: 'candlepin', sha: env.PR_SHA, context: 'jenkins-rspec-postgresql', job: "candlepin-pullrequest-spectests-postgresql", parameters: [[
+                            $class: 'StringParameterValue',
+                            name: 'sha1',
+                            value: "${commit}"
+                        ]])
+                    }
+                }
+                stage('Rspec MySQL') {
+                    when {
+                        expression {
+                            return params.TEST_MYSQL
+                        }
+                    }
+                    steps {
+                        buildWithNotifications(repo: 'candlepin', sha: env.PR_SHA, context: 'jenkins-rspec-mysql', job: "candlepin-pullrequest-spectests-mysql", parameters: [[
+                            $class: 'StringParameterValue',
+                            name: 'sha1',
+                            value: "${commit}"
+                        ]])
+                    }
+                }
+                stage('Rspec Hosted Postgresql') {
+                    when {
+                        expression {
+                            return params.TEST_POSTGRES_HOSTED
+                        }
+                    }
+                    steps {
+                        buildWithNotifications(repo: 'candlepin', sha: env.PR_SHA, context: 'jenkins-rspec-hosted-postgres', job: "candlepin-pullrequest-spectests-hosted-postgresql", parameters: [[
+                            $class: 'StringParameterValue',
+                            name: 'sha1',
+                            value: "${commit}"
+                        ]])
+                    }
+                }
+                stage('Rspec Hosted Mysql') {
+                    when {
+                        expression {
+                            return params.TEST_MYSQL_HOSTED
+                        }
+                    }
+                    steps {
+                        buildWithNotifications(repo: 'candlepin', sha: env.PR_SHA, context: 'jenkins-rspec-hosted-mysql', job: "candlepin-pullrequest-spectests-hosted-mysql", parameters: [[
+                            $class: 'StringParameterValue',
+                            name: 'sha1',
+                            value: "${commit}"
+                        ]])
+                    }
+                }
+                stage('Rspec QPID') {
+                    when {
+                        expression {
+                            return params.TEST_QPID
+                        }
+                    }
+                    steps {
+                        buildWithNotifications(repo: 'candlepin', sha: env.PR_SHA, context: 'jenkins-rspec-qpid', job: "candlepin-pullrequest-spectests-qpid", parameters: [[
+                            $class: 'StringParameterValue',
+                            name: 'sha1',
+                            value: "${commit}"
+                        ]])
+                    }
+                }
+                stage('Check Bugzilla reference') {
+                    when {
+                        expression {
+                            return params.TEST_BZ_REFERENCE
+                        }
+                        expression {
+                            return pr_number != null
+                        }
+                    }
+                    steps {
+                        buildWithNotifications(repo: 'candlepin', sha: env.PR_SHA, context: 'jenkins-bugzilla-reference', job: "candlepin-check-bugzilla-reference", parameters: [[
+                            $class: 'StringParameterValue',
+                            name: 'pr_number',
+                            value: "${pr_number}"
+                        ]])
+                    }
+                }
+            }
+        }
+    }
+    post {
+        success {
+            githubStatus(repo: 'candlepin', sha: env.PR_SHA, status: 'SUCCESS', context: 'jenkins-pipeline', targetUrl: BUILD_URL)
+        }
+        unsuccessful {
+            githubStatus(repo: 'candlepin', sha: env.PR_SHA, status: 'FAILURE', context: 'jenkins-pipeline', targetUrl: BUILD_URL)
         }
     }
 }
