@@ -5,6 +5,7 @@ def call(Map args) {
         }
     }
     if (args.pr_number == null) {
+        echo "Not a PR, skipping PR info fetch"
         return
     }
     node('master') {

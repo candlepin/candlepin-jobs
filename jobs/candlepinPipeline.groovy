@@ -3,7 +3,7 @@
 pipeline {
     agent none
     parameters {
-        string(name: 'commit', description:'What to test. Use origin/pr/<pr_number>/merge to test a PR')
+        string(name: 'commit', description:'What to test. Use origin/pr/&lt;pr_number&gt;/merge to test a PR')
         booleanParam(name: 'TEST_UNIT_TESTS', defaultValue: true, description: 'Run unit tests')
         booleanParam(name: 'TEST_BZ_REFERENCE', defaultValue: true, description: 'Run BZ reference check')
         booleanParam(name: 'TEST_CHECKSTYLE', defaultValue: true, description: 'Run checkstyle tests')
@@ -15,10 +15,12 @@ pipeline {
     }
     stages {
         stage('Get PR number') {
-            script {
-                env.pr_number = null
-                if ("${commit}" ~== 'origin/pr/.*/merge') {
-                    env.pr_number = ("${commit}" ~= 'origin/pr/(.*)/merge')[0][1]
+            steps {
+                script {
+                    env.pr_number = null
+                    if ("${commit}" ==~ 'origin/pr/.*/merge') {
+                        env.pr_number = ("${commit}" =~ 'origin/pr/(.*)/merge')[0][1]
+                    }
                 }
             }
         }
