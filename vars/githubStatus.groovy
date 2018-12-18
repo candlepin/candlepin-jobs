@@ -1,14 +1,14 @@
 def call(Map args) {
-    ['repo', 'status', 'sha', 'context', 'targetUrl', 'pr_number'].each { arg ->
+    ['repo', 'status', 'sha', 'context', 'targetUrl'].each { arg ->
         if (!args.containsKey(arg)) {
             throw new IllegalArgumentException("Missing ${arg} in call to githubStatus")
         }
     }
 
-    return; // don't want to actually set at the moment...
+    //return; // don't want to actually set at the moment...
 
-    if (pr_number == null) {
-        return  // if this wasn't a PR, no need to report status
+    if (args.sha == "" || args.sha == null) {
+        return
     }
 
     GITHUB_CREDENTIALS_ID = 'github-api-token-as-username-password'

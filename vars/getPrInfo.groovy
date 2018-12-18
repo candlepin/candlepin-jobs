@@ -4,8 +4,7 @@ def call(Map args) {
             throw new IllegalArgumentException("Missing ${arg} in call to getPrInfo")
         }
     }
-    if (args.pr_number == null) {
-        echo "Not a PR, skipping PR info fetch"
+    if (args.pr_number == "" || args.pr_number == null) {
         return
     }
     node('master') {
