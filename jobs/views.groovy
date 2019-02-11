@@ -4,7 +4,8 @@ import jobLib.rhsmLib
 def candlepinJobs = [
     rhsmLib.candlepinJobFolder,
     rhsmLib.submanJobFolder,
-    'Docker Cleanup'
+    'DockerCleanup',
+    'WsCleanup'
 ]
 
 listView("Candlepin") {
