@@ -3,4 +3,6 @@
   become: true
   tasks:
     - name: install git
-      package: name=git state=present
+      package:
+        name: git
+        state: present

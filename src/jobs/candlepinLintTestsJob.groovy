@@ -4,14 +4,14 @@ String baseFolder = rhsmLib.candlepinJobFolder
 
 String githubOrg = binding.variables['CANDLEPIN_JENKINS_GITHUB_ORG'] ?: 'candlepin'
 
-def rhsmJob = job("$baseFolder/candlepin-pullrequest-unittests") {
-    previousNames('candlepin-pullrequest-unittests')
-    description('Compiles candlepin and runs unit tests. Does not produce any installable products.')
+def rhsmJob = job("$baseFolder/candlepin-pullrequest-lint") {
+    previousNames('candlepin-pullrequest-lint')
+    description('Runs a linter against Candlepin code, and other miscellaneous checks. Does not produce any installable products.')
     label('docker')
     concurrentBuild()
     wrappers {
         timeout {
-            noActivity(7200)
+            noActivity(600)
         }
         preBuildCleanup()
         colorizeOutput()
@@ -21,7 +21,7 @@ def rhsmJob = job("$baseFolder/candlepin-pullrequest-unittests") {
         artifactNumToKeep(5)
     }
     steps {
-        shell readFileFromWorkspace('resources/candlepin-unit-tests.sh')
+        shell readFileFromWorkspace('src/resources/candlepin-lint.sh')
     }
     publishers {
         archiveArtifacts {
@@ -31,4 +31,4 @@ def rhsmJob = job("$baseFolder/candlepin-pullrequest-unittests") {
     }
 }
 
-rhsmLib.addPullRequester(rhsmJob, githubOrg, rhsmLib.candlepinRepo, 'jenkins-candlepin-unittests', false)
+rhsmLib.addPullRequester(rhsmJob, githubOrg, rhsmLib.candlepinRepo, 'jenkins-checkstyle', false)

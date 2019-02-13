@@ -14,6 +14,6 @@ job("$baseFolder/vagrant-upstream-images") {
         }
     }
     steps {
-        shell(readFileFromWorkspace('resources/subman-vagrant-images.sh'))
+        shell(readFileFromWorkspace('src/resources/subman-vagrant-images.sh'))
     }
 }

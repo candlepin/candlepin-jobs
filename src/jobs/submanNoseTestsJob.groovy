@@ -17,9 +17,9 @@ def rhsmJob = job("$baseFolder/subscription-manager-nose-tests-pr"){
         numToKeep(20)
     }
     steps {
-        shell readFileFromWorkspace('resources/subscription-manager-nose-tests.sh')
-        shell readFileFromWorkspace('resources/python-rhsm-nose-tests.sh')
-        shell readFileFromWorkspace('resources/syspurpose-nose-tests.sh')
+        shell readFileFromWorkspace('src/resources/subscription-manager-nose-tests.sh')
+        shell readFileFromWorkspace('src/resources/python-rhsm-nose-tests.sh')
+        shell readFileFromWorkspace('src/resources/syspurpose-nose-tests.sh')
     }
     publishers {
         archiveArtifacts {

@@ -41,7 +41,7 @@ pipeline = pipelineJob("$baseFolder/candlepin") {
     }
     definition {
         cps {
-            script(readFileFromWorkspace('jobs/candlepinPipeline.groovy'))
+            script(readFileFromWorkspace('src/jobs/candlepinPipeline.groovy'))
         }
     }
 }

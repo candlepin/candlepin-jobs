@@ -1,0 +1,22 @@
+jenkins:
+  systemMessage: "Configured automatically with JCasC plugin\n\n"
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin"
+          password: "admin"
+  authorizationStrategy: loggedInUsersCanDoAnything
+
+tool:
+  git:
+    installations:
+    - home: "git"
+      name: "Default"
+
+security:
+  globaljobdslsecurityconfiguration:
+    useScriptSecurity: false
+
+jobs:
+  - file: /var/jenkins_home/seed.groovy

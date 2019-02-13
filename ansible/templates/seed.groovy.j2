@@ -1,18 +1,13 @@
 job('Development Seed Job') {
     customWorkspace('/vagrant/')
-    environmentVariables(CANDLEPIN_JENKINS_GITHUB_ORG: '{{ CANDLEPIN_JENKINS_GITHUB_ORG }}')
     steps {
         gradle 'clean test'
         dsl {
-            external 'jobs/folders.groovy'
+            external 'src/jobs/**/*Job.groovy'
             additionalClasspath 'src/main/groovy'
         }
         dsl {
-            external 'jobs/**/*Job.groovy'
-            additionalClasspath 'src/main/groovy'
-        }
-        dsl {
-            external 'jobs/views.groovy'
+            external 'src/jobs/views.groovy'
             additionalClasspath 'src/main/groovy'
         }
     }

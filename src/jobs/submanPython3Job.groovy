@@ -16,7 +16,7 @@ def job = job("$baseFolder/subscription-manager-python3-tests-pr-builder"){
         numToKeep(20)
     }
     steps {
-        shell readFileFromWorkspace('resources/subscription-manager-python3-tests.sh')
+        shell readFileFromWorkspace('src/resources/subscription-manager-python3-tests.sh')
     }
     publishers {
         archiveArtifacts {

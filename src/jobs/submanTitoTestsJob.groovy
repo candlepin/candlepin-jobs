@@ -17,7 +17,7 @@ def titoJob = job("$baseFolder/subscription-manager-tito-tests-pr"){
         numToKeep(20)
     }
     steps {
-        shell readFileFromWorkspace('resources/subscription-manager-tito-tests.sh')
+        shell readFileFromWorkspace('src/resources/subscription-manager-tito-tests.sh')
     }
     publishers {
         archiveArtifacts {

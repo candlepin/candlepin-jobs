@@ -30,7 +30,7 @@ pipeline = pipelineJob("$baseFolder/subscription-manager") {
     }
     definition {
         cps {
-            script(readFileFromWorkspace('jobs/submanPipeline.groovy'))
+            script(readFileFromWorkspace('src/jobs/submanPipeline.groovy'))
         }
     }
 }

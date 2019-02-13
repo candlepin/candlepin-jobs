@@ -17,7 +17,7 @@ def stylishJob = job("$baseFolder/subscription-manager-stylish-tests-pr"){
         numToKeep(20)
     }
     steps {
-        shell readFileFromWorkspace('resources/subscription-manager-stylish-tests.sh')
+        shell readFileFromWorkspace('src/resources/subscription-manager-stylish-tests.sh')
     }
     publishers {
         archiveArtifacts {
