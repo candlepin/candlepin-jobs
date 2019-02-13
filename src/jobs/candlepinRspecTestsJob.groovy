@@ -33,7 +33,7 @@ databases.each { db ->
                 artifactNumToKeep(5)
             }
             steps {
-                shell readFileFromWorkspace('resources/candlepin-rspec-tests.sh')
+                shell readFileFromWorkspace('src/resources/candlepin-rspec-tests.sh')
             }
             publishers {
                 archiveArtifacts {

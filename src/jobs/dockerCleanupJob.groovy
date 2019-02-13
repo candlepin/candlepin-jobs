@@ -18,6 +18,6 @@ job("DockerCleanup"){
         cron('H 20 * * *')
     }
     steps {
-        shell readFileFromWorkspace('resources/docker-cleanup.sh')
+        shell readFileFromWorkspace('src/resources/docker-cleanup.sh')
     }
 }

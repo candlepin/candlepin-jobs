@@ -23,7 +23,7 @@ job("$baseFolder/candlepin-docker-images") {
         cron('H 6 * * 1')
     }
     steps {
-        shell readFileFromWorkspace('resources/candlepin-docker-build.sh')
+        shell readFileFromWorkspace('src/resources/candlepin-docker-build.sh')
     }
     publishers {
         irc {

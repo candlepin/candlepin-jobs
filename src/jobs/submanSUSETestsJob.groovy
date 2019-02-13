@@ -19,7 +19,7 @@ distros.each { distro ->
             numToKeep(20)
         }
         steps {
-            shell readFileFromWorkspace('resources/subscription-manager-suse-tests.sh')
+            shell readFileFromWorkspace('src/resources/subscription-manager-suse-tests.sh')
         }
         publishers {
             archiveArtifacts {
