@@ -1,23 +1,14 @@
-String listOfSlaves(int start, int end) {
-  String slaveList = ""
-  for (i = start; i <= end; i++) {
-    slaveList = slaveList + "rhsm-jenkins-slave${i}.usersys.redhat.com"
-    if ( i < end ) {
-      slaveList = slaveList + ","
-    }
-  }
-  return slaveList
-}
-
 job("DockerCleanup"){
     description('This job deletes unused docker images across all the slave nodes.')
     label('rhsm')
     parameters {
-        stringParam('DOCKER_HOSTS', listOfSlaves(0,10), 'Hostnames of servers to run on.')
+        labelParam('NODE_LABEL') {
+          defaultValue('rhsm')
+          description('Select nodes')
+          allNodes('allCases', 'IgnoreOfflineNodeEligibility')
+        }
         booleanParam('RESTART_DOCKER', false, 'Restart docker afterwards if checked.')
-    }
-    wrappers {
-        sshAgent('fe2c79db-3166-4e61-8996-a8e7de7fbb5c')
+        booleanParam('CLEAR_BUILD_CACHE', false, 'Clear the docker build cache if checked.')
     }
     logRotator{
         numToKeep(10)
