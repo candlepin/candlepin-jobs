@@ -1,9 +1,11 @@
 job("WsCleanup"){
     description('This job deletes leftover ws-cleanup files across all the slave nodes.')
-    labelParam('NODE_LABEL') {
-        defaultValue('rhsm')
-        description('Select nodes')
-        allNodes('allCases', 'IgnoreOfflineNodeEligibility')
+    parameters {
+        labelParam('NODE_LABEL') {
+            defaultValue('rhsm')
+            description('Select nodes')
+            allNodes('allCases', 'IgnoreOfflineNodeEligibility')
+        }
     }
     logRotator{
         numToKeep(10)
