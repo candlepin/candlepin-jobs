@@ -17,6 +17,7 @@ htmlpublisher:latest
 ircbot:latest
 job-dsl:latest
 mask-passwords:latest
+nodelabelparameter:latest
 ownership:latest
 parameterized-trigger:latest
 permissive-script-security:latest

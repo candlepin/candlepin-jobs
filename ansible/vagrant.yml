@@ -51,12 +51,14 @@
       - ircbot
       - job-dsl
       - mask-passwords
+      - nodelabelparameter
       - ownership
       - parameterized-trigger
       - permissive-script-security
       - pipeline-githubnotify-step
       - progress-bar-column-plugin
       - ssh-slaves
+      - timestamper
       - uno-choice
       - view-job-filters
       - workflow-aggregator

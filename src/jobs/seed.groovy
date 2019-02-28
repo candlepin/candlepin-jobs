@@ -12,15 +12,15 @@ job('Candlepin Seed Job') {
     steps {
         gradle 'clean test'
         dsl {
-            external 'jobs/folders.groovy'
+            external 'src/jobs/folders.groovy'
             additionalClasspath 'src/main/groovy'
         }
         dsl {
-            external 'jobs/**/*Job.groovy'
+            external 'src/jobs/**/*Job.groovy'
             additionalClasspath 'src/main/groovy'
         }
         dsl {
-            external 'jobs/views.groovy'
+            external 'src/jobs/views.groovy'
             additionalClasspath 'src/main/groovy'
         }
     }

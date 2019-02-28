@@ -14,6 +14,6 @@ job("WsCleanup"){
         cron('H 20 * * *')
     }
     steps {
-        shell readFileFromWorkspace('resources/ws-cleanup.sh')
+        shell readFileFromWorkspace('src/resources/ws-cleanup.sh')
     }
 }

@@ -3,12 +3,16 @@ job('Development Seed Job') {
     steps {
         gradle 'clean test'
         dsl {
-        external 'src/jobs/**/*Job.groovy'
-        additionalClasspath 'src/main/groovy'
+            external 'src/jobs/folders.groovy'
+            additionalClasspath 'src/main/groovy'
         }
         dsl {
-        external 'src/jobs/views.groovy'
-        additionalClasspath 'src/main/groovy'
+            external 'src/jobs/**/*Job.groovy'
+            additionalClasspath 'src/main/groovy'
+        }
+        dsl {
+            external 'src/jobs/views.groovy'
+            additionalClasspath 'src/main/groovy'
         }
     }
 }
