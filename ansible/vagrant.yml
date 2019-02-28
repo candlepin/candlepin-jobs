@@ -25,30 +25,47 @@
         line: "search example.com"
 
   vars:
+    # This should be the same version as your production Jenkins
+    jenkins_version: 2.121.3
+    # Have to set this since we're using a LTE release
+    jenkins_pkg_url: "https://pkg.jenkins.io/redhat-stable"
     java_packages:
       - java-1.8.0-openjdk
+    # These are the jenkins pagckage names for your plugins.  This is a default set but you may need fewer or more.
     jenkins_plugins:
       - ansible
       - ansicolor
       - build-timeout
+      - copyartifact
+      - configuration-as-code
+      - configuration-as-code-support
       - credentials-binding
       - email-ext
       - envinject
+      - fail-the-build-plugin
       - ghprb
       - git
       - github
+      - gradle
       - htmlpublisher
       - ircbot
-      - jenkins-multijob-plugin
       - job-dsl
+      - mask-passwords
+      - nodelabelparameter
+      - ownership
       - parameterized-trigger
+      - permissive-script-security
       - pipeline-githubnotify-step
       - progress-bar-column-plugin
       - ssh-slaves
-      #- uno-choice  ## now vendored from jenkins-plugins
+      - timestamper
+      - uno-choice
+      - view-job-filters
       - workflow-aggregator
       - ws-cleanup
-    CANDLEPIN_JENKINS_GITHUB_ORG: candlepin
+      - xvfb
+      - rebuild
+
   roles:
     - geerlingguy.jenkins
 
@@ -73,6 +90,8 @@
         owner: jenkins
         group: jenkins
         mode: 0755
+      tags:
+        - init.groovy
 
     - name: disable mail relay
       lineinfile: dest=/etc/postfix/main.cf line="default_transport = local:$myhostname"
@@ -94,7 +113,7 @@
   become: true
   vars:
     jenkins_dummy_configs:
-      - candlepinPerformanceInventory
+      - "Inventory"
 
   tasks:
     - name: Wait for Jenkins to start up before proceeding.
@@ -104,3 +123,4 @@
       retries: "60"
       delay: "5"
       changed_when: false
+

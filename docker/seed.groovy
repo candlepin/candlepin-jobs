@@ -1,5 +1,5 @@
 job('Development Seed Job') {
-    customWorkspace('/vagrant/')
+    customWorkspace('/var/jenkins_home/dsl-dev/')
     steps {
         gradle 'clean test'
         dsl {

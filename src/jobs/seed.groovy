@@ -1,5 +1,14 @@
-job('Development Seed Job') {
-    customWorkspace('/vagrant/')
+job('Candlepin Seed Job') {
+    label('rhsm')
+    wrappers {
+        preBuildCleanup()
+    }
+    scm {
+        github('candlepin/candlepin-jobs', 'master')
+    }
+    triggers {
+        scm 'H/5 * * * *'
+    }
     steps {
         gradle 'clean test'
         dsl {
@@ -13,6 +22,13 @@ job('Development Seed Job') {
         dsl {
             external 'src/jobs/views.groovy'
             additionalClasspath 'src/main/groovy'
+        }
+    }
+    publishers {
+        publishHtml {
+            report('build/reports/tests/') {
+                reportName('Grade Test Results')
+            }
         }
     }
 }
