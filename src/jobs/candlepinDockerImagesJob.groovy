@@ -26,6 +26,11 @@ job("$baseFolder/candlepin-docker-images") {
         shell readFileFromWorkspace('src/resources/candlepin-docker-build.sh')
     }
     publishers {
+        postBuildScripts {
+            steps {
+                shell 'docker logout docker-registry.engineering.redhat.com'
+            }
+        }
         irc {
             channel('#candlepin')
         }
