@@ -28,7 +28,7 @@ job("$baseFolder/candlepin-docker-images") {
     publishers {
         postBuildScripts {
             steps {
-                shell 'docker logout'
+                shell 'docker logout docker-registry.engineering.redhat.com'
             }
         }
         irc {
