@@ -5,7 +5,7 @@ String baseFolder = rhsmLib.candlepinJobFolder
 job("$baseFolder/candlepin-docker-images") {
     previousNames('candlepin-docker-images')
     description('Periodically builds and pushes docker images from master')
-    label('docker')
+    label('docker-build')
     scm {
         github('candlepin/candlepin', 'master')
     }
