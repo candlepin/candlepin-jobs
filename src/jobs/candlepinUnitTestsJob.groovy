@@ -18,7 +18,8 @@ def rhsmJob = job("$baseFolder/candlepin-pullrequest-unittests") {
     }
     logRotator{
         daysToKeep(90)
-        artifactNumToKeep(5)
+        artifactNumToKeep(-1)
+        artifactDaysToKeep(2)
     }
     steps {
         shell readFileFromWorkspace('src/resources/candlepin-unit-tests.sh')

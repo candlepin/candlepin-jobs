@@ -30,7 +30,8 @@ databases.each { db ->
             }
             logRotator{
                 daysToKeep(90)
-                artifactNumToKeep(5)
+                artifactNumToKeep(-1)
+                artifactDaysToKeep(2)
             }
             steps {
                 shell readFileFromWorkspace('src/resources/candlepin-rspec-tests.sh')
