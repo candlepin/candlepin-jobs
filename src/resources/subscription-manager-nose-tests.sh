@@ -18,7 +18,7 @@ echo "sha1:" "${sha1}"
 cd $WORKSPACE
 
 sudo dnf clean expire-cache
-sudo dnf builddep subscription-manager.spec  # ensure we install any missing rpm deps
+sudo dnf builddep -y subscription-manager.spec  # ensure we install any missing rpm deps
 virtualenv env --system-site-packages -p python2 || true
 source env/bin/activate
 

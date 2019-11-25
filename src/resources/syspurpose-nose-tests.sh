@@ -9,7 +9,7 @@ echo "sha1:" "${sha1}"
 
 sudo dnf clean expire-cache
 sudo dnf install -y python37
-sudo dnf builddep subscription-manager.spec  # ensure we install any missing rpm deps
+sudo dnf builddep -y subscription-manager.spec  # ensure we install any missing rpm deps
 
 pushd $WORKSPACE/syspurpose
 
