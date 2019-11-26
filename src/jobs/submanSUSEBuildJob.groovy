@@ -5,7 +5,7 @@ String githubOrg = binding.variables['CANDLEPIN_JENKINS_GITHUB_ORG'] ?: 'candlep
 
 def DISTROS = [ // values can be found via `osc repos`
     'opensuse42': 'openSUSE_Leap_42.2',
-    'sles11': 'SUSE_SLE-11_SP3_standard',
+    'sles11': 'SLE_11_SP4',
     'sles12': 'SLE_12_SP1',
 ]
 
