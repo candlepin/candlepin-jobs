@@ -8,7 +8,7 @@ String desc = "Run 'make stylish' on github pull requests for subscription-manag
 def stylishJob = job("$baseFolder/subscription-manager-stylish-tests-pr"){
     previousNames("subscription-manager-stylish-tests-pr")
     description(desc)
-    label('rhsm')
+    label('subman')
     wrappers {
         preBuildCleanup()
         colorizeOutput('css')
