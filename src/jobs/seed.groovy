@@ -1,5 +1,5 @@
 job('Candlepin Seed Job') {
-    label('rhsm')
+    label('utils')
     wrappers {
         preBuildCleanup()
     }
