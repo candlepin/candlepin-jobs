@@ -8,7 +8,7 @@ String desc = "Run 'tito build --test --rpm' on github pull requests for subscri
 def titoJob = job("$baseFolder/subscription-manager-tito-tests-pr"){
     previousNames("subscription-manager-tito-tests-pr")
     description(desc)
-    label('rhsm')
+    label('rpmbuild')
     wrappers {
         preBuildCleanup()
         colorizeOutput('css')

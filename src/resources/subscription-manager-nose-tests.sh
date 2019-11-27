@@ -23,6 +23,7 @@ virtualenv env --system-site-packages -p python2 || true
 source env/bin/activate
 
 make install-pip-requirements
+pip install --user -r ./test-requirements.txt
 
 # build/test python-rhsm
 if [ -d $WORKSPACE/python-rhsm ]; then
