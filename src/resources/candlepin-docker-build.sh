@@ -7,7 +7,7 @@ env
 echo "Using workspace: $WORKSPACE"
 docker --version
 
-docker login -u unused -p "$DOCKER_API_TOKEN" docker-registry.engineering.redhat.com
+docker login -u unused -p "$DOCKER_API_TOKEN" docker-registry.upshift.redhat.com
 ./docker/build-images -p -c
 
 sudo setenforce 0

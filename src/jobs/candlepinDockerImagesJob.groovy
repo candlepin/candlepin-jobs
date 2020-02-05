@@ -32,7 +32,7 @@ job("$baseFolder/candlepin-docker-images") {
                     alwaysRun()
                 }
                 steps {
-                    shell 'docker logout docker-registry.engineering.redhat.com'
+                    shell 'docker logout docker-registry.upshift.redhat.com'
                 }
             }
         }
