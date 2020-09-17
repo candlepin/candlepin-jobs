@@ -5,7 +5,7 @@ String baseFolder = rhsmLib.submanJobFolder
 def rhsmJob = job("$baseFolder/subscription-manager-nose-tests-pr"){
     previousNames("subscription-manager-nose-tests-pr")
     description('Welcome to the subscription-manager nose tests!')
-    label('subman')
+    label('subman-centos7')
     wrappers {
         preBuildCleanup()
         colorizeOutput('css')
