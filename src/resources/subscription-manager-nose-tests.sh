@@ -16,8 +16,8 @@
 echo "sha1:" "${sha1}"
 
 # Decide which package manager to use
-which dnf
-if [ $? -eq 0 ]; then
+which dnf || EXITCODE=$?
+if [ $EXITCODE -eq 0 ]; then
     PM=dnf
 else
     PM=yum
