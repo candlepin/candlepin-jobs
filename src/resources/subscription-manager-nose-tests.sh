@@ -15,10 +15,17 @@
 
 echo "sha1:" "${sha1}"
 
+# Decide which package manager to use
+if [ -a $(which dnf) ]; then
+    PM=dnf
+else
+    PM=yum
+fi
+
 cd $WORKSPACE
 
-sudo dnf clean expire-cache
-sudo dnf builddep -y subscription-manager.spec  # ensure we install any missing rpm deps
+sudo $PM clean expire-cache
+sudo $PM builddep -y subscription-manager.spec  # ensure we install any missing rpm deps
 virtualenv env --system-site-packages -p python2 || true
 source env/bin/activate
 
