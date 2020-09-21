@@ -26,8 +26,12 @@ fi
 cd $WORKSPACE
 
 sudo $PM clean expire-cache
-sudo $PM builddep -y subscription-manager.spec  # ensure we install any missing rpm deps
-virtualenv env -p python2
+if [ $PM -eq 'dnf' ]; then
+    sudo $PM builddep -y subscription-manager.spec  # ensure we install any missing rpm deps
+    virtualenv env -p python3
+else
+    virtualenv env -p python2
+fi
 source env/bin/activate
 
 make install-pip-requirements
