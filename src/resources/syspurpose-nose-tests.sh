@@ -7,9 +7,18 @@ fi
 
 echo "sha1:" "${sha1}"
 
-sudo dnf clean expire-cache
-sudo dnf install -y python37
-sudo dnf builddep -y subscription-manager.spec  # ensure we install any missing rpm deps
+which dnf || EXITCODE=$?
+if [ $EXITCODE -eq 0 ]; then
+    PM=dnf
+else
+    PM=yum
+fi
+
+sudo $PM clean expire-cache
+sudo $PM install -y python37
+if [ $PM -eq 'dnf' ]; then
+    sudo dnf builddep -y subscription-manager.spec  # ensure we install any missing rpm deps
+fi
 
 pushd $WORKSPACE/syspurpose
 

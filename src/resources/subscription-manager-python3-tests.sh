@@ -16,9 +16,17 @@
 
 echo "sha" "${sha1}"
 
+which dnf || EXITCODE=$?
+if [ $EXITCODE -eq 0 ]; then
+    PM=dnf
+else
+    PM=yum
+fi
 
-sudo dnf clean expire-cache
-sudo dnf builddep -y subscription-manager.spec  # ensure we install any missing rpm deps
+sudo $PM clean expire-cache
+if [ $PM -eq 'dnf' ]; then
+    sudo $PM builddep -y subscription-manager.spec  # ensure we install any missing rpm deps
+fi
 virtualenv env -p python3 --system-site-packages || virtualenv-3 env --system-site-packages || true
 source env/bin/activate
 pip install -I -r test-requirements.txt
