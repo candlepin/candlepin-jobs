@@ -47,11 +47,6 @@ PYTHON_RHSM=$(pwd)
 python setup.py build
 python setup.py build_ext --inplace
 
-# not using "setup.py nosetests" yet
-# since they need a running candlepin
-# yeah, kind of ugly...
-cp build/lib.linux-*/rhsm/_certificate.so src/rhsm/
-
 pushd $WORKSPACE
 export PYTHONPATH="$PYTHON_RHSM"/src
 
