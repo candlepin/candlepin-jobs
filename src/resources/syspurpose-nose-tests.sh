@@ -7,8 +7,8 @@ fi
 
 echo "sha1:" "${sha1}"
 
-which dnf || EXITCODE=$?
-if [ $EXITCODE -eq 0 ]; then
+which dnf
+if [ $? -eq 0 ]; then
     PM=dnf
 else
     PM=yum
@@ -16,7 +16,7 @@ fi
 
 sudo $PM clean expire-cache
 sudo $PM install -y python37
-if [ $PM -eq 'dnf' ]; then
+if [ $PM = 'dnf' ]; then
     sudo dnf builddep -y subscription-manager.spec  # ensure we install any missing rpm deps
 fi
 

@@ -16,8 +16,8 @@
 echo "sha1:" "${sha1}"
 
 # Decide which package manager to use
-which dnf || EXITCODE=$?
-if [ $EXITCODE -eq 0 ]; then
+which dnf
+if [ $? -eq 0 ]; then
     PM=dnf
 else
     PM=yum
@@ -26,7 +26,7 @@ fi
 cd $WORKSPACE
 
 sudo $PM clean expire-cache
-if [ $PM -eq 'dnf' ]; then
+if [ $PM = 'dnf' ]; then
     sudo $PM builddep -y subscription-manager.spec  # ensure we install any missing rpm deps
     virtualenv env -p python3
 else
