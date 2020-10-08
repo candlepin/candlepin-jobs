@@ -1,5 +1,6 @@
 job('Development Seed Job') {
     customWorkspace('/vagrant/')
+    environmentVariables(JENKINS_GITHUB_ORG: '{{ JENKINS_GITHUB_ORG }}')
     steps {
         gradle 'clean test'
         dsl {

@@ -25,48 +25,49 @@
         line: "search example.com"
 
   vars:
-    # This should be the same version as your production Jenkins
-    jenkins_version: 2.121.3
-    # Have to set this since we're using a LTE release
+    jenkins_version: 2.190.3
     jenkins_pkg_url: "https://pkg.jenkins.io/redhat-stable"
     java_packages:
       - java-1.8.0-openjdk
-    # These are the jenkins pagckage names for your plugins.  This is a default set but you may need fewer or more.
     jenkins_plugins:
       - ansible
       - ansicolor
+      - blueocean
+      - build-blocker-plugin
       - build-timeout
+      - cachet-gating
       - copyartifact
-      - configuration-as-code
-      - configuration-as-code-support
       - credentials-binding
       - email-ext
       - envinject
       - fail-the-build-plugin
+      - flexible-publish
       - ghprb
       - git
       - github
-      - gradle
+      - groovy
       - htmlpublisher
       - ircbot
+      - jms-messaging
       - job-dsl
-      - mask-passwords
-      - nodelabelparameter
-      - ownership
       - parameterized-trigger
       - permissive-script-security
       - pipeline-githubnotify-step
       - progress-bar-column-plugin
+      - ssh-agent
       - ssh-slaves
-      - timestamper
+      - testng-plugin
       - uno-choice
       - view-job-filters
       - workflow-aggregator
       - ws-cleanup
+      - any-buildstep
       - xvfb
       - rebuild
+    JENKINS_GITHUB_ORG: RedHatQE
 
   roles:
+    - geerlingguy.java
     - geerlingguy.jenkins
 
   tasks:

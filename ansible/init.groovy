@@ -1,8 +1,17 @@
 import jenkins.model.Jenkins
 import jenkins.model.*
+import com.cloudbees.plugins.credentials.*
+import com.cloudbees.plugins.credentials.common.*
+import com.cloudbees.plugins.credentials.domains.*
+import com.cloudbees.jenkins.plugins.sshcredentials.impl.*
+import hudson.plugins.sshslaves.*;
 import hudson.markup.RawHtmlMarkupFormatter
+import com.redhat.jenkins.plugins.cachet.GlobalCachetConfiguration
+import com.redhat.jenkins.plugins.cachet.ResourceUpdater
 
-System.setProperty("hudson.model.DirectoryBrowserSupport.CSP", "")
+ResourceUpdater.setResources();
+
+System.setProperty("hudson.model.DirectoryBrowserSupport.CSP", "sandbox allow-scripts; default-src 'self'; style-src 'self' 'unsafe-inline'; script-src * 'unsafe-inline';")
 System.setProperty("hudson.plugins.ircbot", "SEVERE")
 System.setProperty("org.pircbotx.InputParser", "OFF")
 System.setProperty("hudson.model.ParametersAction.keepUndefinedParameters", "true")
@@ -19,3 +28,5 @@ Jenkins.instance.getExtensionList(
     it.useScriptSecurity = false
     it.save()
   }
+
+global_domain = Domain.global()
