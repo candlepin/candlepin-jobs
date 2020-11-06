@@ -1,18 +1,18 @@
 import jobLib.rhsmLib
 
 
-def candlepinJobs = [
+def devJobs = [
     rhsmLib.candlepinJobFolder,
     rhsmLib.submanJobFolder,
     'DockerCleanup',
     'WsCleanup'
 ]
 
-listView("Candlepin") {
-  description('Candlepin Engineering Jobs')
+listView("Devel") {
+  description('Engineering Jobs')
   filterExecutors()
   jobs {
-    candlepinJobs.each { j ->
+    devJobs.each { j ->
       name(j)
     }
   }

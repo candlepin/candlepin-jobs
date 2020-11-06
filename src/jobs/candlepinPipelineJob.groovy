@@ -1,49 +1,54 @@
 import jobLib.rhsmLib
 
 String baseFolder = rhsmLib.candlepinJobFolder
-String githubOrg = binding.variables['CANDLEPIN_JENKINS_GITHUB_ORG'] ?: 'candlepin'
 
-pipeline_helper = job("$baseFolder/candlepin-pipeline-helper") {
-    environmentVariables {
-        groovy('''
-            return [emailDestination: binding.variables.get('ghprbPullAuthorEmail') ?: binding.variables.get('GIT_AUTHOR_EMAIL')]
-        ''')
-    }
-    logRotator {
-        numToKeep(1)
-    }
-    steps {
-        downstreamParameterized {
-            trigger('candlepin') {
-                parameters {
-                    predefinedProp('sha1', '${sha1}')
-                    predefinedProp('ghprbActualCommit', '${ghprbActualCommit}')
-                    predefinedProp('emailDestination', '${emailDestination}')
-                    predefinedProp('ghprbTargetBranch', '${ghprbTargetBranch}')
-                    predefinedProp('ghprbPullId', '${ghprbPullId}')
+multibranchPipelineJob("${baseFolder}/candlepin") {
+    branchSources {
+        // upstream; PRs only
+        branchSource {
+            source {
+                github {
+                    id('9dff2e67-8a82-415b-afc7-f79fe76795cd') // IMPORTANT: use a constant and unique identifier
+                    credentialsId('github-api-token-as-username-password')
+                    repoOwner('candlepin')
+                    repository('candlepin')
+                    repositoryUrl('https://github.com/candlepin/candlepin.git')
+                    configuredByUrl(false)
+                    traits {
+                        gitHubPullRequestDiscovery {
+                            strategyId(1)
+                        }
+                        cleanAfterCheckoutTrait {
+                            extension {
+                                deleteUntrackedNestedRepositories(true)
+                            }
+                        }
+                    }
                 }
             }
         }
     }
-}
-
-pipeline = pipelineJob("$baseFolder/candlepin") {
-    description('Delivery Pipeline for candlepin')
-    parameters {
-        stringParam('sha1', 'master', 'GIT commit hash of what you want to test.')
-        stringParam('ghprbActualCommit', null, 'commit used to report status against a GitHub PR')
-        stringParam('ghprbTargetBranch', null, 'PR target branch')
-        stringParam('emailDestination', null, 'email address to report failures to')
-        stringParam('ghprbPullId', null, 'PR number (used in certain checks)')
+    factory {
+        workflowBranchProjectFactory {
+            scriptPath('jenkins/Jenkinsfile')
+        }
     }
-    logRotator {
-        numToKeep(20)
+    orphanedItemStrategy {
+        discardOldItems {
+            numToKeep(5)
+        }
     }
-    definition {
-        cps {
-            script(readFileFromWorkspace('src/resources/candlepinPipeline.groovy'))
+    triggers {
+        periodicFolderTrigger {
+            interval('5m')
+        }
+    }
+    // TODO: remove this when issue is resolved > https://issues.jenkins-ci.org/browse/JENKINS-60874
+    configure {
+        def traits = it / 'sources' / 'data' / 'jenkins.branch.BranchSource' / 'source' / 'traits'
+        traits << 'org.jenkinsci.plugins.github__branch__source.ForkPullRequestDiscoveryTrait' {
+            strategyId(1)
+            trust(class: 'org.jenkinsci.plugins.github_branch_source.ForkPullRequestDiscoveryTrait$TrustPermission')
         }
     }
 }
-
-rhsmLib.addPullRequester(pipeline_helper, githubOrg, rhsmLib.candlepinRepo, 'jenkins-pipeline', true, false)

@@ -6,7 +6,7 @@ class rhsmLib {
     static String candlepinRepo = "candlepin"
     static String submanRepo = "subscription-manager"
     static String candlepinJobFolder = "candlepin"
-    static String submanJobFolder = "RHSM"
+    static String submanJobFolder = "subscription-manager"
 
     static addPullRequester = { Job job, String githubOrg, String repo, String name, boolean trigger = true, boolean notify = true ->
         job.with {
