@@ -127,6 +127,13 @@ stage('test') {
                 name: 'pr_number',
                 value: "${ghprbPullId}"
             ]]))
+        },
+        'jenkins-validate-translation': {
+            results.add(buildWithNotifications(context: 'jenkins-validate-translation', job: "candlepin-pullrequest-validate-translation", parameters: [[
+                $class: 'StringParameterValue',
+                name: 'sha1',
+                value: "${sha1}"
+            ]]))
         }
     )
     node('master') {
