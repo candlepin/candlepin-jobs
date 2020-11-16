@@ -53,6 +53,11 @@ multibranchPipelineJob("${baseFolder}/subscription-manager") {
       numToKeep(5)
     }
   }
+  triggers {
+    periodicFolderTrigger {
+      interval('5m')
+    }
+  }
   // TODO: remove this when issue is resolved > https://issues.jenkins-ci.org/browse/JENKINS-60874
   configure {
     def traits = it / 'sources' / 'data' / 'jenkins.branch.BranchSource' / 'source' / 'traits'
