@@ -69,7 +69,7 @@ do
     evalrc $? "Git add files was not successful for branch $GIT_BRANCH."
 
     echo "Committing and pushing the files."
-    sudo git commit -m "Internationalization: common/po files are updated"
+    sudo git -c "user.name=$GIT_AUTHOR_NAME" -c "user.email=$GIT_AUTHOR_EMAIL" commit -m "Internationalization: common/po files are updated"
     evalrc $? "Git commit was not successful for branch $GIT_BRANCH."
 
     sudo git push https://${GITHUB_TOKEN}@github.com/candlepin/candlepin  $GIT_BRANCH
