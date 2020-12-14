@@ -5,6 +5,10 @@ String baseFolder = rhsmLib.candlepinJobFolder
 job("$baseFolder/candlepin-internationalization") {
     description('Periodically executes the gettext and msgattrib tasks on master/hotfix branches')
     label('candlepinbuild')
+    environmentVariables {
+        env('GIT_AUTHOR_NAME', 'candlepin-bot')
+        env('GIT_AUTHOR_EMAIL', '3229038+candlepin-bot@users.noreply.github.com')
+    }
     scm {
         git {
             remote {
