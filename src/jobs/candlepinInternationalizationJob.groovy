@@ -13,7 +13,7 @@ job("$baseFolder/candlepin-internationalization") {
         git {
             remote {
                 url('https://github.com/candlepin/candlepin.git')
-                credentials('bot_github_token')
+                credentials('github-api-token-as-username-password')
             }
             branch("master")
         }
@@ -28,5 +28,8 @@ job("$baseFolder/candlepin-internationalization") {
     }
     steps {
         shell readFileFromWorkspace('src/resources/candlepin-internationalization.sh')
+    }
+    publishers {
+        wsCleanup()
     }
 }
