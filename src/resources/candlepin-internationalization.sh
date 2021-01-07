@@ -18,17 +18,17 @@ get_simplified_version() {
 }
 
 
-sudo git fetch --all
+git fetch --all
 
 for GIT_BRANCH in master candlepin-3.1-HOTFIX candlepin-2.9-HOTFIX
 do
 
   #Clean the project
-  sudo ./gradlew clean
+  ./gradlew clean
   evalrc $? "Project cleaning was not successful for branch $GIT_BRANCH."
 
   #Checkout the branch
-  sudo git checkout $GIT_BRANCH
+  git checkout $GIT_BRANCH
   evalrc $? "Checkout branch : $GIT_BRANCH was not successful."
 
   # Check if we need to use Java 11, otherwise auto detect Java version.
@@ -49,35 +49,35 @@ do
   fi
 
   #To generate the auto generated classes and files
-  sudo ./gradlew war
+  ./gradlew war
   evalrc $? "Compilation was not successful for branch $GIT_BRANCH."
 
   #Execute the gettext task
-  sudo ./gradlew gettext
+  ./gradlew gettext
   evalrc $? "Gettext was not successful for branch $GIT_BRANCH."
 
   #Executing the msgattrib task
-  sudo ./gradlew msgattrib
+  ./gradlew msgattrib
   evalrc $? "msgattrib was not successful for branch $GIT_BRANCH."
 
-  files=$(sudo git diff | egrep -v -e '^( |\+#|\-#|@@|\+\+\+|\-\-\-|diff|index)' -e 'X-Generator' -e 'POT-Creation-Date')
+  files=$(git diff | egrep -v -e '^( |\+#|\-#|@@|\+\+\+|\-\-\-|diff|index)' -e 'X-Generator' -e 'POT-Creation-Date')
 
   if [  ! -z  "$files" ]; then
 
     #Code to commit the updated files
-    sudo git add common/po
+    git add common/po
     evalrc $? "Git add files was not successful for branch $GIT_BRANCH."
 
     echo "Committing and pushing the files."
-    sudo git -c "user.name=$GIT_AUTHOR_NAME" -c "user.email=$GIT_AUTHOR_EMAIL" commit -m "Internationalization: common/po files are updated"
+    git -c "user.name=$GIT_AUTHOR_NAME" -c "user.email=$GIT_AUTHOR_EMAIL" commit -m "Internationalization: common/po files are updated"
     evalrc $? "Git commit was not successful for branch $GIT_BRANCH."
 
-    sudo git push https://${GITHUB_TOKEN}@github.com/candlepin/candlepin  $GIT_BRANCH
+    git push https://${GITHUB_TOKEN}@github.com/candlepin/candlepin  $GIT_BRANCH
     evalrc $? "Git push was not successful for branch $GIT_BRANCH."
 
   else
     #To stash the unnecessary changes
-    sudo git stash
+    git stash
   fi
 
 done
