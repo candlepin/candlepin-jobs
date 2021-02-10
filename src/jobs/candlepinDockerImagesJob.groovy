@@ -13,7 +13,7 @@ job("$baseFolder/candlepin-docker-images") {
         preBuildCleanup()
         colorizeOutput()
         credentialsBinding {
-            string('DOCKER_API_TOKEN', 'CANDLEPIN-DOCKER-API-TOKEN')
+            usernamePassword('CANDLEPIN_QUAY_BOT_USER', 'CANDLEPIN_QUAY_BOT_TOKEN', 'candlepin-quay-bot')
         }
     }
     logRotator{
@@ -32,7 +32,7 @@ job("$baseFolder/candlepin-docker-images") {
                     alwaysRun()
                 }
                 steps {
-                    shell 'docker logout docker-registry.upshift.redhat.com'
+                    shell 'docker logout quay.io'
                 }
             }
         }
