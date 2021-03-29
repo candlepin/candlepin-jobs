@@ -72,7 +72,6 @@ dependencies {
   testPlugins 'org.jenkins-ci.plugins.workflow:workflow-step-api:2.22'
   testPlugins 'org.jenkins-ci.plugins:any-buildstep:0.1'
   testPlugins 'org.jenkins-ci.plugins:build-blocker-plugin:1.7.3'
-  testPlugins 'org.jenkins-ci.plugins:cachet-gating:1.0.7'
   testPlugins 'org.jenkins-ci.plugins:cloudbees-folder:6.14'
   testPlugins 'org.jenkins-ci.plugins:credentials:2.3.11'
   testPlugins 'org.jenkins-ci.plugins:cvs:2.14'
