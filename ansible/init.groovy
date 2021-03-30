@@ -6,8 +6,6 @@ import com.cloudbees.plugins.credentials.domains.*
 import com.cloudbees.jenkins.plugins.sshcredentials.impl.*
 import hudson.plugins.sshslaves.*;
 import hudson.markup.RawHtmlMarkupFormatter
-import com.redhat.jenkins.plugins.cachet.GlobalCachetConfiguration
-import com.redhat.jenkins.plugins.cachet.ResourceUpdater
 
 ResourceUpdater.setResources();
 
