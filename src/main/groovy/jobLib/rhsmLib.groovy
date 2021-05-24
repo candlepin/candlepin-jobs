@@ -5,8 +5,10 @@ import javaposse.jobdsl.dsl.Job
 class rhsmLib {
     static String candlepinRepo = "candlepin"
     static String submanRepo = "subscription-manager"
+    static String virtwhoRepo = "virt-who"
     static String candlepinJobFolder = "candlepin"
     static String submanJobFolder = "subscription-manager"
+    static String virtwhoJobFolder = "virt-who"
 
     static addPullRequester = { Job job, String githubOrg, String repo, String name, boolean trigger = true, boolean notify = true ->
         job.with {
