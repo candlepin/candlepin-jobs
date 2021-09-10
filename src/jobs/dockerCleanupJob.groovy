@@ -1,9 +1,9 @@
 job("DockerCleanup"){
     description('This job deletes unused docker images across all the slave nodes.')
-    label('rhsm')
+    label('candlepin')
     parameters {
         labelParam('NODE_LABEL') {
-          defaultValue('rhsm')
+          defaultValue('candlepin')
           description('Select nodes')
           allNodes('allCases', 'IgnoreOfflineNodeEligibility')
         }
