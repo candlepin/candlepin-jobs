@@ -2,7 +2,7 @@ job("WsCleanup"){
     description('This job deletes leftover ws-cleanup files across all the slave nodes.')
     parameters {
         labelParam('NODE_LABEL') {
-            defaultValue('rhsm')
+            defaultValue('candlepin')
             description('Select nodes')
             allNodes('allCases', 'IgnoreOfflineNodeEligibility')
         }
