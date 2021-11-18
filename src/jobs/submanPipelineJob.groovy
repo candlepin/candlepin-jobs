@@ -27,26 +27,6 @@ multibranchPipelineJob("${baseFolder}/subscription-manager") {
         }
       }
     }
-    // downstream; release branches
-    branchSource {
-      source {
-        git {
-          remote('https://gitlab.sat.engineering.redhat.com/satellite6/subscription-manager.git')
-          id('b509c5c8-fce7-11ea-a16b-0050b6b571b4')
-          traits {
-            headWildcardFilter {
-              includes('RHEL* SLE_*')
-              excludes('RHEL7* RHEL6* RHEL5*')
-            }
-            cleanAfterCheckoutTrait {
-              extension {
-                deleteUntrackedNestedRepositories(true)
-              }
-            }
-          }
-        }
-      }
-    }
   }
   orphanedItemStrategy {
     discardOldItems {
