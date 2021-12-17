@@ -20,7 +20,7 @@ get_simplified_version() {
 
 git fetch --all
 
-for GIT_BRANCH in master candlepin-4.0-HOTFIX candlepin-3.2-HOTFIX candlepin-3.1-HOTFIX
+for GIT_BRANCH in master candlepin-4.0-HOTFIX candlepin-3.2-HOTFIX
 do
 
   #Clean the project
