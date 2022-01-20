@@ -27,6 +27,7 @@ job("$baseFolder/candlepin-internationalization") {
         cron('0 7 * * 0,4')
     }
     steps {
+        shell('sudo dnf install -y jss')
         shell readFileFromWorkspace('src/resources/candlepin-internationalization.sh')
     }
     publishers {
