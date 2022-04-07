@@ -4,6 +4,7 @@ String baseFolder = rhsmLib.candlepinJobFolder
 
 job("$baseFolder/CandlepinPerformanceOverride") {
     description('Job that watches for performance OK by candlepin org members and marks a PR as PASS for performance. Use responsibly')
+    disabled()
     parameters {
         stringParam('sha1', null, 'sha1 of commit to PASS performance for')
     }
