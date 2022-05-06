@@ -37,22 +37,34 @@ server_plugins = f'[ {server_plugins} ]'
 server_plugins = json.loads(server_plugins)
 
 updated_plugins = []
+plugin_names = []
 for i in plugins:
     parts = i.split(':')
     if 'group:' not in i:
         name = parts[1]
         update = [x for x in server_plugins if x['name'] == name]
+        if not update:
+            print(f'**Could not find plugin: {name} on server!\n')
+            continue
         update = update[0]
         # testPlugins 'org.jenkins-ci.plugins:github-branch-source:2.8.2'
         updated_plugins.append(f"testPlugins '{update['group']}:{name}:{update['version']}'")
+        plugin_names.append(name)
 
     elif 'group:' in i:
         name = parts[2].split(',')[0].replace("'", "").strip()
         update = [x for x in server_plugins if x['name'] == name]
+        if not update:
+            print(f'**Could not find plugin: {name} on server!\n')
+            continue
         update = update[0]
         # testPlugins group: 'org.jenkins-ci.plugins.workflow', name: 'workflow-aggregator', version: '2.6'
         updated_plugins.append(
             f"testPlugins group: '{update['group']}', name: '{name}', version: '{update['version']}'"
         )
+        plugin_names.append(name)
 
+print('\n<< plugins.txt >>\n')
+print('\n'.join(plugin_names))
+print('\n<< build.gradle >>\n')
 print('\n'.join(updated_plugins))

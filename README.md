@@ -43,19 +43,6 @@ Or manually create a job with the same structure:
 * Process Job DSLs → Additional classpath: `src/main/groovy`
 * Publish JUnit test result report → Test report XMLs: `build/test-results/**/*.xml`
 
-## REST API Runner
-
-A gradle task is configured that can be used to create/update jobs via the Jenkins REST API, if desired. Normally
-a seed job is used to keep jobs in sync with the DSL, but this runner might be useful if you'd rather process the
-DSL outside of the Jenkins environment or if you want to create the seed job from a DSL script.
-
-```./gradlew rest -Dpattern=<pattern> -DbaseUrl=<baseUrl> [-Dusername=<username>] [-Dpassword=<password>]```
-
-* `pattern` - ant-style path pattern of files to include
-* `baseUrl` - base URL of Jenkins server
-* `username` - Jenkins username, if secured
-* `password` - Jenkins password or token, if secured
-
 # Running this project
 
 Originally this project was designed for running on your own hosted version of Jenkins (such as the Jenkins CSB) and populating the jobs on there via the seed jobs.  Included here is a vagrant/ansible setup (in the `ansible` folder) that that will start a local Jenkins server that will give you a full access environment to test your jobs and poke around however you like.  Also included is a container environment setup in the `docker` folder if you prefer working that way or deploy your jenkins on openshift.  For the purposes of the examples given, both enviornments are set up the same using  [Jenkins Configuration as Code](https://github.com/jenkinsci/configuration-as-code-plugin/blob/master/README.md) to set up the system.
