@@ -21,6 +21,3 @@ fi
 if [ "$RESTART_DOCKER" = 'true' ]; then
   sudo systemctl restart docker
 fi
-
-
-

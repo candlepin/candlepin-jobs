@@ -2,7 +2,7 @@ cd $WORKSPACE
 
 # Do nothing if syspurpose directory is absent
 if [ ! -d syspurpose ]; then
-    exit 0;
+    exit 0
 fi
 
 echo "sha1:" "${sha1}"
@@ -17,7 +17,7 @@ fi
 sudo $PM clean expire-cache
 sudo $PM install -y python37
 if [ $PM -eq 'dnf' ]; then
-    sudo dnf builddep -y subscription-manager.spec  # ensure we install any missing rpm deps
+    sudo dnf builddep -y subscription-manager.spec # ensure we install any missing rpm deps
 fi
 
 pushd $WORKSPACE/syspurpose

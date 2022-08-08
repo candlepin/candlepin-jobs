@@ -15,11 +15,10 @@ repositories {
   mavenCentral()
   maven { url 'https://repo.jenkins-ci.org/releases/' }
   maven { url 'https://repo.jenkins-ci.org/public/' }
-  // jcenter()
 }
 
 configurations {
-  testPlugins {}
+  testPlugins { }
 }
 
 // Exclude buggy Xalan dependency this way the JRE default TransformerFactory is used
@@ -36,25 +35,30 @@ dependencies {
     exclude(module: 'groovy')
   }
   */
-  implementation  'org.apache.ant:ant:1.9.7'
+  implementation 'org.apache.ant:ant:1.9.7'
 
   testImplementation 'org.spockframework:spock-core:1.0-groovy-2.4'
   testImplementation 'cglib:cglib-nodep:2.2.2' // used by Spock
 
   // Jenkins test harness dependencies
   testImplementation('org.jenkins-ci.main:jenkins-test-harness:2.33') {
-    exclude group: 'org.netbeans.modules', module: 'org-netbeans-insane' // https://github.com/sheehan/job-dsl-gradle-example/issues/90
+    // https://github.com/sheehan/job-dsl-gradle-example/issues/90
+    exclude group: 'org.netbeans.modules', module: 'org-netbeans-insane'
   }
   testImplementation("org.jenkins-ci.main:jenkins-war:${jenkinsVersion}") {
-    exclude group: 'org.jenkins-ci.ui', module: 'bootstrap' // https://github.com/sheehan/job-dsl-gradle-example/issues/87
+    // https://github.com/sheehan/job-dsl-gradle-example/issues/87
+    exclude group: 'org.jenkins-ci.ui', module: 'bootstrap'
   }
 
   // Job DSL plugin including plugin dependencies
   testImplementation "org.jenkins-ci.plugins:job-dsl:${jobDslVersion}"
   testImplementation "org.jenkins-ci.plugins:job-dsl:${jobDslVersion}@jar"
-  testImplementation 'org.jenkins-ci.plugins:structs:1.20@jar'
-  testImplementation 'org.jenkins-ci.plugins:cloudbees-folder:6.9@jar'
-  testImplementation 'org.jenkins-ci.plugins:script-security:1.68@jar'
+  testImplementation 'org.jenkins-ci.plugins:cloudbees-folder:6.736.v5f554b_b_a_52b_3@jar'
+  testImplementation 'org.jenkins-ci.plugins:command-launcher:84.v4a_97f2027398@jar'
+  testImplementation 'org.jenkins-ci.plugins:script-security:1175.v4b_d517d6db_f0@jar'
+  testImplementation 'org.jenkins-ci.plugins:structs:324.va_f5d6774f3a_d@jar'
+  testImplementation 'org.jenkins-ci.plugins:branch-api:2.1046.v0ca_37783ecc5@jar'
+  testImplementation 'org.jenkins-ci.plugins:scm-api:616.ve67136f6c77d@jar'
 
 // Run the following script in the Script Console of your Jenkins instance to generate
 // the above testPlugins list. (adapted from https://git.io/fjpUs)
@@ -68,43 +72,48 @@ dependencies {
         .each { println it }
  */
 
-// plugins to install in test instance
-  testPlugins 'com.coravy.hudson.plugins.github:github:1.34.3'
+  // plugins to install in test instance
+  testPlugins 'com.coravy.hudson.plugins.github:github:1.34.3.1'
+  testPlugins 'io.jenkins.plugins:pipeline-groovy-lib:598.vcd66b_a_336510'
+  testPlugins 'org.jenkins-ci.main:maven-plugin:3.19'
   testPlugins 'org.jenkins-ci.plugins:ansible:1.1'
-  testPlugins 'org.jenkins-ci.plugins:ansicolor:1.0.1'
+  testPlugins 'org.jenkins-ci.plugins:ansicolor:1.0.2'
   testPlugins 'org.jenkins-ci.plugins:any-buildstep:0.1'
+  testPlugins 'org.jenkins-ci.plugins:branch-api:2.1046.v0ca_37783ecc5'
   testPlugins 'org.jenkins-ci.plugins:build-blocker-plugin:1.7.8'
-  testPlugins 'org.jenkins-ci.plugins:cloudbees-folder:6.16'
-  testPlugins 'org.jenkins-ci.plugins:conditional-buildstep:1.4.1'
-  testPlugins 'org.jenkins-ci.plugins:credentials:2.6.1'
-  testPlugins 'org.jenkins-ci.plugins:cvs:2.19'
-  testPlugins 'org.jenkins-ci.plugins:email-ext:2.87'
-  testPlugins 'org.jenkins-ci.plugins:envinject:2.4.0'
+  testPlugins 'org.jenkins-ci.plugins:cloudbees-folder:6.736.v5f554b_b_a_52b_3'
+  testPlugins 'org.jenkins-ci.plugins:conditional-buildstep:1.4.2'
+  testPlugins 'org.jenkins-ci.plugins:credentials:1139.veb_9579fca_33b_'
+  testPlugins 'org.jenkins-ci.plugins:cvs:2.19.1'
+  testPlugins 'org.jenkins-ci.plugins:email-ext:2.91'
+  testPlugins 'org.jenkins-ci.plugins:envinject:2.866.v5c0403e3d4df'
   testPlugins 'org.jenkins-ci.plugins:flexible-publish:0.16.1'
   testPlugins 'org.jenkins-ci.plugins:ghprb:1.42.2'
-  testPlugins 'org.jenkins-ci.plugins:git:4.10.3'
-  testPlugins 'org.jenkins-ci.plugins:github-branch-source:2.11.4'
-  testPlugins 'org.jenkins-ci.plugins:gradle:1.38'
-  testPlugins 'org.jenkins-ci.plugins:groovy:2.4'
-  testPlugins 'org.jenkins-ci.plugins:htmlpublisher:1.29'
+  testPlugins 'org.jenkins-ci.plugins:git:4.11.4'
+  testPlugins 'org.jenkins-ci.plugins:github-api:1.303-400.v35c2d8258028'
+  testPlugins 'org.jenkins-ci.plugins:github-branch-source:1677.v731f745ea_0cf'
+  testPlugins 'org.jenkins-ci.plugins:gradle:1.39.4'
+  testPlugins 'org.jenkins-ci.plugins:groovy:442.v817e6d937d6c'
+  testPlugins 'org.jenkins-ci.plugins:htmlpublisher:1.30'
   testPlugins 'org.jenkins-ci.plugins:jms-messaging:1.1.27'
-  testPlugins 'org.jenkins-ci.plugins:mailer:408.vd726a_1130320'
-  testPlugins 'org.jenkins-ci.plugins:matrix-project:758.v7a_ea_491852f3'
-  testPlugins 'org.jenkins-ci.plugins:nodelabelparameter:1.10.3'
-  testPlugins 'org.jenkins-ci.plugins:parameterized-trigger:2.44'
+  testPlugins 'org.jenkins-ci.plugins:mailer:435.v79ef3972b_5c7'
+  testPlugins 'org.jenkins-ci.plugins:matrix-project:772.v494f19991984'
+  testPlugins 'org.jenkins-ci.plugins:nodelabelparameter:1.11.0'
+  testPlugins 'org.jenkins-ci.plugins:parameterized-trigger:2.45'
   testPlugins 'org.jenkins-ci.plugins:progress-bar-column-plugin:1.0'
-  testPlugins 'org.jenkins-ci.plugins:ssh-agent:1.24.1'
-  testPlugins 'org.jenkins-ci.plugins:testng-plugin:554.va4a552116332'
-  testPlugins 'org.jenkins-ci.plugins:timestamper:1.17'
-  testPlugins 'org.jenkins-ci.plugins:token-macro:280.v97a_82642793c'
+  testPlugins 'org.jenkins-ci.plugins:ssh-agent:295.v9ca_a_1c7cc3a_a_'
+  testPlugins 'org.jenkins-ci.plugins:testng-plugin:555.va0d5f66521e3'
+  testPlugins 'org.jenkins-ci.plugins:timestamper:1.18'
+  testPlugins 'org.jenkins-ci.plugins:token-macro:308.v4f2b_ed62b_b_16'
   testPlugins 'org.jenkins-ci.plugins:view-job-filters:2.3'
-  testPlugins 'org.jenkins-ci.plugins:ws-cleanup:0.40'
-  testPlugins 'org.jenkins-ci.plugins.workflow:workflow-aggregator:2.7'
-  testPlugins 'org.jenkins-ci.plugins.workflow:workflow-api:1143.v2d42f1e9dea_5'
-  testPlugins 'org.jenkins-ci.plugins.workflow:workflow-cps-global-lib:564.ve62a_4eb_b_e039'
-  testPlugins 'org.jenkins-ci.plugins.workflow:workflow-cps:2660.vb_c0412dc4e6d'
-  testPlugins 'org.jenkins-ci.plugins.workflow:workflow-job:1145.v7f2433caa07f'
-  testPlugins 'org.jenkins-ci.plugins.workflow:workflow-step-api:622.vb_8e7c15b_c95a_'
+  testPlugins 'org.jenkins-ci.plugins:ws-cleanup:0.42'
+  testPlugins 'org.jenkins-ci.plugins.workflow:workflow-aggregator:590.v6a_d052e5a_a_b_5'
+  testPlugins 'org.jenkins-ci.plugins.workflow:workflow-api:1188.v0016b_4f29881'
+  testPlugins 'org.jenkins-ci.plugins.workflow:workflow-cps-global-lib:588.v576c103a_ff86'
+  testPlugins 'org.jenkins-ci.plugins.workflow:workflow-cps:2729.vea_17b_79ed57a_'
+  testPlugins 'org.jenkins-ci.plugins.workflow:workflow-job:1189.va_d37a_e9e4eda_'
+  testPlugins 'org.jenkins-ci.plugins.workflow:workflow-step-api:639.v6eca_cd8c04a_a_'
+  // TODO: figure out version 2.44 deps
   testPlugins 'org.jvnet.hudson.plugins:ircbot:2.42'
 }
 

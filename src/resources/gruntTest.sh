@@ -5,8 +5,8 @@ node_dir=~/jenkins/node
 
 mkdir -p $node_dir
 
-test -f ${node_dir}/${node_name}.tar.gz ||  wget -P $node_dir http://nodejs.org/dist/v${node_version}/${node_name}.tar.gz
-test -f ${node_dir}/${node_name}/bin/node || tar -zxvf ${node_dir}/${node_name}.tar.gz  -C $node_dir
+test -f ${node_dir}/${node_name}.tar.gz || wget -P $node_dir http://nodejs.org/dist/v${node_version}/${node_name}.tar.gz
+test -f ${node_dir}/${node_name}/bin/node || tar -zxvf ${node_dir}/${node_name}.tar.gz -C $node_dir
 
 export PATH=${node_dir}/${node_name}/bin:$PATH
 
