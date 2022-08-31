@@ -5,9 +5,10 @@ groups $USER
 env
 
 echo "Using workspace: $WORKSPACE"
-docker --version
+export CONTAINER_ENGINE="podman"
+"${CONTAINER_ENGINE}" --version
 
-docker login -u "$CANDLEPIN_QUAY_BOT_USER" -p "$CANDLEPIN_QUAY_BOT_TOKEN" quay.io
+"${CONTAINER_ENGINE}" login -u "$CANDLEPIN_QUAY_BOT_USER" -p "$CANDLEPIN_QUAY_BOT_TOKEN" quay.io
 ./docker/build-images -p -c
 
 sudo setenforce 0
