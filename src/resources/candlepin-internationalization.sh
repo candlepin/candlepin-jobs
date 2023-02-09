@@ -29,22 +29,8 @@ for GIT_BRANCH in master candlepin-4.1-HOTFIX; do
   git checkout $GIT_BRANCH
   evalrc $? "Checkout branch : $GIT_BRANCH was not successful."
 
-  # Check if we need to use Java 11, otherwise auto detect Java version.
-  # Candlepin support Java 11 from 3.2.0 & onwards.
-
-  CANDLEPIN_BASE_VERSION=$(grep "Version:" candlepin.spec.tmpl | awk -F"Version: " '{print $2}')
-  JAVA_11_SUPPORTED_VERSION=3.2.0
-
-  echo "Base version of candlepin: " $CANDLEPIN_BASE_VERSION
-  if [ $(get_simplified_version $CANDLEPIN_BASE_VERSION) -ge $(get_simplified_version $JAVA_11_SUPPORTED_VERSION) ]; then
-    JAVA_VERSION=11
-    echo "Using Java 11 for branch $GIT_BRANCH."
-    sudo update-alternatives --set java /usr/lib/jvm/java-$JAVA_VERSION-openjdk-$JAVA_VERSION*/bin/java
-  else
-    JAVA_VERSION=1.8.0
-    echo "Using Java 8 for branch $GIT_BRANCH."
-    sudo update-alternatives --set java /usr/lib/jvm/java-$JAVA_VERSION-openjdk-$JAVA_VERSION*/jre/bin/java
-  fi
+  JAVA_VERSION=11
+  sudo update-alternatives --set java /usr/lib/jvm/java-$JAVA_VERSION-openjdk-$JAVA_VERSION*/bin/java
 
   #To generate the auto generated classes and files
   ./gradlew war
