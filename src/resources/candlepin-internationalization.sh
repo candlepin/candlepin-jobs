@@ -19,7 +19,7 @@ get_simplified_version() {
 
 git fetch --all
 
-for GIT_BRANCH in master candlepin-4.1-HOTFIX candlepin-4.0-HOTFIX candlepin-3.2-HOTFIX; do
+for GIT_BRANCH in master candlepin-4.1-HOTFIX; do
 
   #Clean the project
   ./gradlew clean
