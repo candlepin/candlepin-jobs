@@ -19,7 +19,7 @@ get_simplified_version() {
 
 git fetch --all
 
-for GIT_BRANCH in master candlepin-4.1-HOTFIX candlepin-4.0-HOTFIX candlepin-3.2-HOTFIX; do
+for GIT_BRANCH in master candlepin-4.1-HOTFIX; do
 
   #Clean the project
   ./gradlew clean
@@ -29,38 +29,8 @@ for GIT_BRANCH in master candlepin-4.1-HOTFIX candlepin-4.0-HOTFIX candlepin-3.2
   git checkout $GIT_BRANCH
   evalrc $? "Checkout branch : $GIT_BRANCH was not successful."
 
-  # Candlpin project restructuring
-  # We need to correctly set the project home path.
-  # We define CP_NEW_STRUCTURE boolean to check if
-  # we are running with new candlepin project structure.
-  # In new candlepin project structure, candlepin.spec.tmpl
-  # file is moved to project root.
-  PROJECT_DIR="."
-  CP_NEW_STRUCTURE=true
-  if [ ! -f candlepin.spec.tmpl ]; then
-    PROJECT_DIR="server"
-    CP_NEW_STRUCTURE=false
-    echo "This build is running with OLD Candlepin project structure."
-  else
-    echo "This build is running with NEW Candlepin project structure."
-  fi
-
-  # Check if we need to use Java 11, otherwise auto detect Java version.
-  # Candlepin support Java 11 from 3.2.0 & onwards.
-
-  CANDLEPIN_BASE_VERSION=$(grep "Version:" $PROJECT_DIR/candlepin.spec.tmpl | awk -F"Version: " '{print $2}')
-  JAVA_11_SUPPORTED_VERSION=3.2.0
-
-  echo "Base version of candlepin: " $CANDLEPIN_BASE_VERSION
-  if [ $(get_simplified_version $CANDLEPIN_BASE_VERSION) -ge $(get_simplified_version $JAVA_11_SUPPORTED_VERSION) ]; then
-    JAVA_VERSION=11
-    echo "Using Java 11 for branch $GIT_BRANCH."
-    sudo update-alternatives --set java /usr/lib/jvm/java-$JAVA_VERSION-openjdk-$JAVA_VERSION*/bin/java
-  else
-    JAVA_VERSION=1.8.0
-    echo "Using Java 8 for branch $GIT_BRANCH."
-    sudo update-alternatives --set java /usr/lib/jvm/java-$JAVA_VERSION-openjdk-$JAVA_VERSION*/jre/bin/java
-  fi
+  JAVA_VERSION=11
+  sudo update-alternatives --set java /usr/lib/jvm/java-$JAVA_VERSION-openjdk-$JAVA_VERSION*/bin/java
 
   #To generate the auto generated classes and files
   ./gradlew war
@@ -75,20 +45,11 @@ for GIT_BRANCH in master candlepin-4.1-HOTFIX candlepin-4.0-HOTFIX candlepin-3.2
   if [ ! -z "$files" ]; then
 
     #Code to commit the updated template file
-    if [ "$CP_NEW_STRUCTURE" == true ]; then
-      git add po/keys.pot
-    else
-      git add common/po/keys.pot
-    fi
+    git add po/keys.pot
     evalrc $? "Git add file was not successful for branch $GIT_BRANCH."
 
     echo "Committing and pushing the template file."
-    if [ "$CP_NEW_STRUCTURE" == true ]; then
-      git -c "user.name=$GIT_AUTHOR_NAME" -c "user.email=$GIT_AUTHOR_EMAIL" commit -m "i18n: po/keys.pot template is updated"
-    else
-      git -c "user.name=$GIT_AUTHOR_NAME" -c "user.email=$GIT_AUTHOR_EMAIL" commit -m "i18n: common/po/keys.pot template is updated"
-    fi
-
+    git -c "user.name=$GIT_AUTHOR_NAME" -c "user.email=$GIT_AUTHOR_EMAIL" commit -m "updated po/keys.pot template"
     evalrc $? "Git commit was not successful for branch $GIT_BRANCH."
 
     git push https://${GITHUB_TOKEN}@github.com/candlepin/candlepin $GIT_BRANCH
