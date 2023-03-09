@@ -77,7 +77,7 @@ http://jenkins.example.com:8080
 
 The default user and password are admin/admin
 
-The `Development Seed Job` on this server is equivalent to the `Master Seed` job in the project.
+The `Development Seed Job` on this server is equivalent to the `Main Seed` job in the project.
 
 Check out the `jenkins_plugins` var in `ansible/vagrant.yml` for a list of installed plugins.  Included are a big list of plugins for many use cases, you should edit this list to your use case.
 

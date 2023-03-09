@@ -3,7 +3,7 @@ import jobLib.rhsmLib
 String baseFolder = rhsmLib.candlepinJobFolder
 
 job("$baseFolder/candlepin-internationalization") {
-    description('Periodically executes the gettext and msgattrib tasks on master/hotfix branches')
+    description('Periodically executes the gettext and msgattrib tasks on main/hotfix branches')
     label('candlepinbuild')
     environmentVariables {
         env('GIT_AUTHOR_NAME', 'candlepin-bot')
@@ -15,7 +15,7 @@ job("$baseFolder/candlepin-internationalization") {
                 url('https://github.com/candlepin/candlepin.git')
                 credentials('github-api-token-as-username-password')
             }
-            branch("master")
+            branch("main")
         }
     }
     wrappers {

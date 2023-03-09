@@ -11,7 +11,7 @@ job("$baseFolder/CandlepinUpdatePerformanceBaseline") {
         colorizeOutput()
     }
     parameters {
-        stringParam('caracalla_branch', 'master', 'name of the caracalla branch to use for the test')
+        stringParam('caracalla_branch', 'main', 'name of the caracalla branch to use for the test')
     }
     scm {
         git {
