@@ -14,7 +14,7 @@ class GradleCiJobBuilder {
   String name
   String description
   String ownerAndProject
-  String gitBranch = 'master'
+  String gitBranch = 'main'
   String pollScmSchedule = '@daily'
   String tasks
   String switches

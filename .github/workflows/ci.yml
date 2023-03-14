@@ -3,7 +3,7 @@ name: CI
 
 on:
   push: # Comment this line to trigger action only on pull-requests (not recommended if you don't pay for GH Actions)
-    branches: [master, main]
+    branches: [main]
   pull_request:
 
 env: # Comment env block if you do not want to apply fixes

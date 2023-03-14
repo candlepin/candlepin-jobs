@@ -15,8 +15,8 @@ job("$baseFolder/CandlepinPerformance") {
         githubProjectUrl('https://github.com/candlepin/candlepin/')
     }
     parameters {
-        stringParam('ghprbActualCommit', 'master', 'name of the candlepin branch to test')
-        stringParam('caracalla_branch', 'master', 'name of the caracalla branch to use for the test')
+        stringParam('ghprbActualCommit', 'main', 'name of the candlepin branch to test')
+        stringParam('caracalla_branch', 'main', 'name of the caracalla branch to use for the test')
         stringParam('candlepin_throughput_properties', '[\'DURATION_SECONDS=3600\',\'SAMPLES_PER_MINUTE=6900\']', 'override test duration, sample size(small=180, medium = 900, large=6900), and other properties.')
         stringParam('loop_over_apis_properties', '[\'SCALE=1000\']', 'override test scale or other specific loop counts.')
         choiceParam('jmeter_tests', ['candlepin-throughput','loop-over-apis','ImportExport'], 'what test to run')

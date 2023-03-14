@@ -13,7 +13,7 @@ class rhsmLib {
     static addPullRequester = { Job job, String githubOrg, String repo, String name, boolean trigger = true, boolean notify = true ->
         job.with {
             parameters {
-                stringParam('sha1', 'master', 'GIT commit hash of what you want to test.')
+                stringParam('sha1', 'main', 'GIT commit hash of what you want to test.')
             }
             scm {
                 git {
