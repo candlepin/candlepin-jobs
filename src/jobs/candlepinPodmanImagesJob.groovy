@@ -2,10 +2,10 @@ import jobLib.rhsmLib
 
 String baseFolder = rhsmLib.candlepinJobFolder
 
-job("$baseFolder/candlepin-docker-images") {
-    previousNames('candlepin-docker-images')
-    description('Periodically builds and pushes docker images from main')
-    label('docker-build')
+job("$baseFolder/candlepin-podman-images") {
+    previousNames('candlepin-podman-images')
+    description('Periodically builds and pushes podman images from master')
+    label('podman-build')
     scm {
         github('candlepin/candlepin', 'main')
     }
@@ -23,7 +23,7 @@ job("$baseFolder/candlepin-docker-images") {
         cron('H 6 * * 1')
     }
     steps {
-        shell readFileFromWorkspace('src/resources/candlepin-docker-build.sh')
+        shell readFileFromWorkspace('src/resources/candlepin-podman-build.sh')
     }
     publishers {
         flexiblePublish {
@@ -32,7 +32,7 @@ job("$baseFolder/candlepin-docker-images") {
                     alwaysRun()
                 }
                 steps {
-                    shell 'docker logout quay.io'
+                    shell 'podman logout quay.io'
                 }
             }
         }
@@ -41,7 +41,7 @@ job("$baseFolder/candlepin-docker-images") {
         }
         extendedEmail {
             recipientList('chainsaw@redhat.com')
-            defaultSubject('Candlepin docker images failed to build')
+            defaultSubject('Candlepin podman images failed to build')
             defaultContent('See $BUILD_URL')
             contentType('text/html')
             triggers {
