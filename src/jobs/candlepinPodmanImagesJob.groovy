@@ -5,7 +5,7 @@ String baseFolder = rhsmLib.candlepinJobFolder
 job("$baseFolder/candlepin-podman-images") {
     previousNames('candlepin-podman-images')
     description('Periodically builds and pushes podman images from master')
-    label('podman-build')
+    label('docker-build')
     scm {
         github('candlepin/candlepin', 'main')
     }
