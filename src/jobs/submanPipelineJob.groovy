@@ -3,6 +3,7 @@ import jobLib.rhsmLib
 String baseFolder = rhsmLib.submanJobFolder
 
 multibranchPipelineJob("${baseFolder}/subscription-manager") {
+  disabled()
   branchSources {
     // upstream; PRs only
     branchSource {
