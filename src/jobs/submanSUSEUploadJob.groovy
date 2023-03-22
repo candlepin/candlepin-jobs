@@ -3,6 +3,7 @@ import jobLib.rhsmLib
 String baseFolder = rhsmLib.submanJobFolder
 
 def rhsmJob = job("$baseFolder/subscription-manager-suse-upload"){
+    disabled()
     description('Prepare and upload subman sources to the OpenSUSE Build Service')
     label('opensuse')
     parameters {

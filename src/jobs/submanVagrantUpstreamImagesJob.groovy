@@ -2,6 +2,7 @@ import jobLib.rhsmLib
 String baseFolder = rhsmLib.submanJobFolder
 
 job("$baseFolder/vagrant-upstream-images") {
+    disabled()
     description('builds centos, fedora, etc. vagrant images for subman development')
     label('rhsm-packer')
     scm {
