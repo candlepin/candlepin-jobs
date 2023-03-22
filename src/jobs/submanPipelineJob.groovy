@@ -3,7 +3,6 @@ import jobLib.rhsmLib
 String baseFolder = rhsmLib.submanJobFolder
 
 multibranchPipelineJob("${baseFolder}/subscription-manager") {
-  disabled()
   branchSources {
     // upstream; PRs only
     branchSource {
@@ -41,6 +40,7 @@ multibranchPipelineJob("${baseFolder}/subscription-manager") {
   }
   // TODO: remove this when issue is resolved > https://issues.jenkins-ci.org/browse/JENKINS-60874
   configure {
+    it / disabled << 'true'
     def traits = it / 'sources' / 'data' / 'jenkins.branch.BranchSource' / 'source' / 'traits'
     traits << 'org.jenkinsci.plugins.github__branch__source.ForkPullRequestDiscoveryTrait' {
       strategyId(1)
