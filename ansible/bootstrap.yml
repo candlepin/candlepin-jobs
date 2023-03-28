@@ -2,8 +2,12 @@
 - hosts: all
   become: true
   tasks:
-    - name: install git
-      package: name=git state=present
+    - name: install packages
+      package:
+        name:
+          - git
+          - python3
+          - postfix
+        state: present
 
-    - name: install python3
-      package: name=python3 state=present
+

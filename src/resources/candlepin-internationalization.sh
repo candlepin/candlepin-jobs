@@ -19,17 +19,24 @@ get_simplified_version() {
 
 git fetch --all
 
-for GIT_BRANCH in main candlepin-4.1-HOTFIX candlepin-4.2-HOTFIX; do
+# Declare an associative array
+declare -A candlepin_java
+
+candlepin_java["main"]="17"
+candlepin_java["candlepin-4.1-HOTFIX"]="11"
+candlepin_java["candlepin-4.2-HOTFIX"]="11"
+
+# Loop through the keys in the map
+for key in "${!candlepin_java[@]}"; do
 
   #Clean the project
   ./gradlew clean
-  evalrc $? "Project cleaning was not successful for branch $GIT_BRANCH."
+  evalrc $? "Project cleaning was not successful for branch $key."
 
   #Checkout the branch
-  git checkout $GIT_BRANCH
-  evalrc $? "Checkout branch : $GIT_BRANCH was not successful."
+  git checkout $key
 
-  JAVA_VERSION=11
+  JAVA_VERSION=${candlepin_java[$key]}
   sudo update-alternatives --set java /usr/lib/jvm/java-$JAVA_VERSION-openjdk-$JAVA_VERSION*/bin/java
 
   #To generate the auto generated classes and files
