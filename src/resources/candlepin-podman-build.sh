@@ -10,4 +10,3 @@ export CONTAINER_ENGINE="podman"
 
 "${CONTAINER_ENGINE}" login -u "$CANDLEPIN_QUAY_BOT_USER" -p "$CANDLEPIN_QUAY_BOT_TOKEN" quay.io
 ./containers/build-images -p -c
-
