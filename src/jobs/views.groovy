@@ -3,7 +3,6 @@ import jobLib.rhsmLib
 
 def devJobs = [
     rhsmLib.candlepinJobFolder,
-    rhsmLib.submanJobFolder,
     'DockerCleanup',
     'WsCleanup'
 ]
