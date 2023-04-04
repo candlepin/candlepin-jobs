@@ -5,7 +5,7 @@ ARG JENKINS_HOME=/var/jenkins_home
 
 # pre load all the plugins with plugins.txt as per jenkins documentation
 COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
-RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt
+RUN jenkins-plugin-cli -f /usr/share/jenkins/ref/plugins.txt
 
 # load up your config as code
 ENV CASC_JENKINS_CONFIG=${JENKINS_HOME}/jenkins.yaml
