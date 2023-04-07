@@ -1,5 +1,5 @@
 job("DockerCleanup"){
-    description('This job deletes unused docker and podman images across all the slave nodes.')
+    description('This job deletes unused docker and podman images across all the worker nodes.')
     label('candlepin')
     parameters {
         labelParam('NODE_LABEL') {
