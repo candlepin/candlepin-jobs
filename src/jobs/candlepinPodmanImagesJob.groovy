@@ -3,6 +3,7 @@ import jobLib.rhsmLib
 String baseFolder = rhsmLib.candlepinJobFolder
 
 job("$baseFolder/candlepin-podman-images") {
+    disabled(true)
     previousNames('candlepin-podman-images')
     description('Periodically builds and pushes podman images from main')
     label('docker-build')

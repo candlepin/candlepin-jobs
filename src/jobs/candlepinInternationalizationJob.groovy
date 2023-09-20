@@ -3,6 +3,7 @@ import jobLib.rhsmLib
 String baseFolder = rhsmLib.candlepinJobFolder
 
 job("$baseFolder/candlepin-internationalization") {
+    disabled(true)
     description('Periodically executes the gettext and msgattrib tasks on main/hotfix branches')
     label('candlepinbuild')
     environmentVariables {
